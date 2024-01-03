@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC POC</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div id="app">
+        <h1>WebRTC POC</h1>
+        <div class="camera-container">
+            <select id="cameras" name="cameras"></select>
+            <div class="loader">
+                <div class="loader-icon"></div>
+            </div>
+            <video id="video-streamer" autoplay >
+                <p>
+                    Your browser doesn't support HTML video.
+                </p>
+            </video>
+            <div class="menu">
+                <button id="toggle-video"><i class="fa-solid fa-video-slash"></i></button>
+                <button id="toggle-audio"><i class="fa-solid fa-microphone-slash"></i></button>
+            </div>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/eb1c665375.js" crossorigin="anonymous"></script>
+    <script src="./main.js"></script>
+</body>
+</html>
