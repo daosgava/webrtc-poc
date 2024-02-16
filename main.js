@@ -13,9 +13,8 @@ class VideoStreamer {
 			const constraints = {
 				audio: { echoCancellation: true },
 				video: {
-					deviceId: this.cameras[0].deviceId,
-					width: { min: 1280 },
-					height: { min: 720 },
+					width: 1280,
+					height: 720,
 				},
 			};
 
@@ -68,15 +67,15 @@ class VideoStreamer {
 		});
 	}
 
-    silenceVideo() {
-        const videoTracks = this.stream.getVideoTracks();
-        videoTracks.forEach((track) => (track.enabled = false));
-    }
+	silenceVideo() {
+		const videoTracks = this.stream.getVideoTracks();
+		videoTracks.forEach((track) => (track.enabled = false));
+	}
 
-    silenceAudio() {
-        const videoTracks = this.stream.getAudioTracks();
-        videoTracks.forEach((track) => (track.enabled = false));
-    }
+	silenceAudio() {
+		const videoTracks = this.stream.getAudioTracks();
+		videoTracks.forEach((track) => (track.enabled = false));
+	}
 
 	resetVideoStream() {
 		this.cameras = [];
@@ -96,9 +95,9 @@ class VideoStreamer {
 }
 
 class Menu {
-	constructor(stream) {
-		this.toggleVideoButton = document.querySelector("button#toggle-video");
-		this.toggleAudioButton = document.querySelector("button#toggle-audio");
+	constructor({ stream, toggleVideo, toggleAudio }) {
+		this.toggleVideoButton = toggleVideo;
+		this.toggleAudioButton = toggleAudio;
 		this.stream = stream;
 		this.listenToToggleMenu();
 	}
@@ -119,12 +118,25 @@ class Menu {
 		try {
 			const videoTracks = this.stream.getVideoTracks();
 			videoTracks.forEach((track) => (track.enabled = !track.enabled));
+			this.changeIcon("video");
+		} catch (error) {
+			console.error("Error toggling video.", error);
+		}
+	}
+
+	changeIcon(buttonType) {
+		if (buttonType === "video") {
 			this.toggleVideoButton.childNodes[0].classList.toggle("fa-video");
 			this.toggleVideoButton.childNodes[0].classList.toggle(
 				"fa-video-slash"
 			);
-		} catch (error) {
-			console.error("Error toggling video.", error);
+		} else {
+			this.toggleAudioButton.childNodes[0].classList.toggle(
+				"fa-microphone"
+			);
+			this.toggleAudioButton.childNodes[0].classList.toggle(
+				"fa-microphone-slash"
+			);
 		}
 	}
 
@@ -139,12 +151,7 @@ class Menu {
 		try {
 			const audioTracks = this.stream.getAudioTracks();
 			audioTracks.forEach((track) => (track.enabled = !track.enabled));
-			this.toggleAudioButton.childNodes[0].classList.toggle(
-				"fa-microphone"
-			);
-			this.toggleAudioButton.childNodes[0].classList.toggle(
-				"fa-microphone-slash"
-			);
+			this.changeIcon("audio");
 		} catch (error) {
 			console.error("Error toggling audio.", error);
 		}
@@ -154,9 +161,16 @@ class Menu {
 const main = async () => {
 	const videoStreamer = new VideoStreamer();
 	await videoStreamer.openCamera();
-	const menu = new Menu(videoStreamer.stream);
-    menu.handleClickToggleAudio();
-    menu.handleClickToggleAudio();
+
+	const toggleVideo = document.querySelector("button#toggle-video");
+	const toggleAudio = document.querySelector("button#toggle-audio");
+	const menu = new Menu({
+		stream: videoStreamer.stream,
+		toggleVideo,
+		toggleAudio,
+	});
+	menu.handleClickToggleVideo();
+	menu.handleClickToggleAudio();
 };
 
 main();
