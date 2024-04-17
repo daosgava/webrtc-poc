@@ -1,4 +1,4 @@
-# WebRTC Media Stream Project with Hone
+# WebRTC Media Stream Proof of Concept (POC)
 
 This project demonstrates the use of WebRTC to access and control the camera and microphone. It leverages Bun and Hone for a fast and efficient back-end setup, Tailwind CSS for styling, and modern JavaScript practices, including modules and classes.
 
