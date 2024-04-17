@@ -14,7 +14,7 @@ To get the project up and running on your local machine, follow these steps:
 
 ```bash
 # Clone the repository
-bun clone https://github.com/daosgava/webrtc-poc.git
+git clone https://github.com/daosgava/webrtc-poc.git
 
 # Navigate to the project directory
 cd webrtc-poc
