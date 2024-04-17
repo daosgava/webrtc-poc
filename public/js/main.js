@@ -3,7 +3,7 @@ class VideoStreamer {
 		this.cameras = [];
 		this.stream = undefined;
 		this.videoElement = document.querySelector("video#video-streamer");
-		this.loaderElement = document.querySelector("div.loader");
+		this.loaderElement = document.querySelector("div#loader");
 		this.listElement = document.querySelector("select#cameras");
 	}
 
@@ -12,14 +12,11 @@ class VideoStreamer {
 			await this.setCameras();
 			const constraints = {
 				audio: { echoCancellation: true },
-				video: {
-					width: 1280,
-					height: 720,
-				},
+				video: {},
 			};
 
 			this.stream = await navigator.mediaDevices.getUserMedia(
-				constraints
+				constraints,
 			);
 			this.setVideoSource();
 		} catch (error) {
@@ -31,7 +28,7 @@ class VideoStreamer {
 		try {
 			const devices = await navigator.mediaDevices.enumerateDevices();
 			const videoCameras = devices.filter(
-				(device) => device.kind === "videoinput"
+				(device) => device.kind === "videoinput",
 			);
 
 			this.cameras = videoCameras;
@@ -62,8 +59,8 @@ class VideoStreamer {
 	setVideoSource() {
 		this.videoElement.srcObject = this.stream;
 		this.videoElement.addEventListener("loadedmetadata", () => {
-			this.loaderElement.style.display = "none";
-			this.videoElement.style.display = "flex";
+			this.loaderElement.classList.toggle("hidden");
+			this.videoElement.classList.toggle("hidden");
 		});
 	}
 
@@ -89,7 +86,7 @@ class VideoStreamer {
 	listenDeviceChanges() {
 		navigator.mediaDevices.addEventListener(
 			"devicechange",
-			this.handleDevicesChange
+			this.handleDevicesChange,
 		);
 	}
 }
@@ -110,7 +107,7 @@ class Menu {
 	listenToToggleVideo() {
 		this.toggleVideoButton.addEventListener(
 			"click",
-			this.handleClickToggleVideo.bind(this)
+			this.handleClickToggleVideo.bind(this),
 		);
 	}
 
@@ -128,14 +125,14 @@ class Menu {
 		if (buttonType === "video") {
 			this.toggleVideoButton.childNodes[0].classList.toggle("fa-video");
 			this.toggleVideoButton.childNodes[0].classList.toggle(
-				"fa-video-slash"
+				"fa-video-slash",
 			);
 		} else {
 			this.toggleAudioButton.childNodes[0].classList.toggle(
-				"fa-microphone"
+				"fa-microphone",
 			);
 			this.toggleAudioButton.childNodes[0].classList.toggle(
-				"fa-microphone-slash"
+				"fa-microphone-slash",
 			);
 		}
 	}
@@ -143,7 +140,7 @@ class Menu {
 	listenToToggleAudio() {
 		this.toggleAudioButton.addEventListener(
 			"click",
-			this.handleClickToggleAudio.bind(this)
+			this.handleClickToggleAudio.bind(this),
 		);
 	}
 
@@ -158,10 +155,8 @@ class Menu {
 	}
 }
 
-const main = async () => {
-	const videoStreamer = new VideoStreamer();
-	await videoStreamer.openCamera();
-
+const videoStreamer = new VideoStreamer();
+videoStreamer.openCamera().then(() => {
 	const toggleVideo = document.querySelector("button#toggle-video");
 	const toggleAudio = document.querySelector("button#toggle-audio");
 	const menu = new Menu({
@@ -171,6 +166,4 @@ const main = async () => {
 	});
 	menu.handleClickToggleVideo();
 	menu.handleClickToggleAudio();
-};
-
-main();
+});
