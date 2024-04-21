@@ -1,15 +1,18 @@
 class VideoStreamer {
-	constructor() {
+	constructor({
+		videoElement,
+		placeholderElement,
+		selectElement,
+	}) {
+		this.videoElement = videoElement;
+		this.placeholderElement = placeholderElement;
+		this.selectElement = selectElement;
 		this.cameras = [];
 		this.stream = undefined;
-		this.videoElement = document.querySelector("video#video-streamer");
-		this.loaderElement = document.querySelector("div#loader");
-		this.listElement = document.querySelector("select#cameras");
 	}
 
-	async openCamera() {
+	async streamToVideo() {
 		try {
-			await this.setCameras();
 			const constraints = {
 				audio: { echoCancellation: true },
 				video: {},
@@ -18,33 +21,37 @@ class VideoStreamer {
 			this.stream = await navigator.mediaDevices.getUserMedia(
 				constraints,
 			);
+
+			// Safari doesn't get devices until getUserMedia is called
+			await this.getCameras();
+
 			this.setVideoSource();
 		} catch (error) {
 			console.error("Error opening video camera.", error);
 		}
 	}
 
-	async setCameras() {
+	async getCameras() {
 		try {
 			const devices = await navigator.mediaDevices.enumerateDevices();
 			const videoCameras = devices.filter(
 				(device) => device.kind === "videoinput",
 			);
-
+			console.log({devices})
 			this.cameras = videoCameras;
-			this.updateCameraList();
+			this.addCamerasToSelectElement();
 		} catch (error) {
 			console.error("Error querying media devices.", error);
 		}
 	}
 
-	updateCameraList() {
+	addCamerasToSelectElement() {
 		if (!this.cameras) {
 			console.warn("No cameras found.");
 			return;
 		}
 
-		this.listElement.innerHTML = "";
+		this.selectElement.innerHTML = "";
 
 		this.cameras.forEach((camera) => {
 			if (!camera.deviceId) return;
@@ -52,26 +59,36 @@ class VideoStreamer {
 			const cameraOption = document.createElement("option");
 			cameraOption.label = camera.label;
 			cameraOption.value = camera.deviceId;
-			this.listElement.add(cameraOption);
+			this.selectElement.add(cameraOption);
 		});
 	}
 
 	setVideoSource() {
 		this.videoElement.srcObject = this.stream;
 		this.videoElement.addEventListener("loadedmetadata", () => {
-			this.loaderElement.classList.toggle("hidden");
-			this.videoElement.classList.toggle("hidden");
+			this.togglePlaceholderVisibility();
+			this.changePlaceholderIcon();
 		});
 	}
 
-	silenceVideo() {
-		const videoTracks = this.stream.getVideoTracks();
-		videoTracks.forEach((track) => (track.enabled = false));
+	togglePlaceholderVisibility() {
+		this.placeholderElement.classList.toggle("hidden");
+		this.videoElement.classList.toggle("hidden");
 	}
 
-	silenceAudio() {
-		const videoTracks = this.stream.getAudioTracks();
-		videoTracks.forEach((track) => (track.enabled = false));
+	changePlaceholderIcon() {
+		this.placeholderElement.innerHTML = '<i class="fa-solid fa-camera"></i>';
+	}
+
+	toggleVideo() {
+		const videoTracks = this.stream.getVideoTracks();
+		videoTracks.forEach((track) => (track.enabled = !track.enabled));
+		this.togglePlaceholderVisibility();
+	}
+
+	toggleAudio() {
+		const audioTracks = this.stream.getAudioTracks();
+		audioTracks.forEach((track) => (track.enabled = !track.enabled));
 	}
 
 	resetVideoStream() {
