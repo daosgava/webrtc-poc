@@ -37,7 +37,7 @@ class VideoStreamer {
 			const videoCameras = devices.filter(
 				(device) => device.kind === "videoinput",
 			);
-			console.log({devices})
+
 			this.cameras = videoCameras;
 			this.addCamerasToSelectElement();
 		} catch (error) {
