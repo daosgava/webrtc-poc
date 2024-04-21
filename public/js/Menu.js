@@ -4,6 +4,10 @@ class Menu {
 		this.toggleAudioButton = toggleAudioElement;
 		this.videoStreamer = videoStreamer;
 		this.attachClickEvents();
+
+		// Deactivate video and audio by default
+		this.handleClickToggleVideo();
+		this.handleClickToggleAudio();
 	}
 
 	attachClickEvents() {

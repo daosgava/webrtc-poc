@@ -19,8 +19,6 @@ const main = async () => {
 		toggleVideoElement,
 		toggleAudioElement,
 	});
-	menu.handleClickToggleVideo();
-	menu.handleClickToggleAudio();
 };
 
 main();
