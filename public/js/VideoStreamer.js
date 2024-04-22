@@ -55,7 +55,7 @@ class VideoStreamer {
 
 		this.cameras.forEach((camera) => {
 			if (!camera.deviceId) return;
-
+			
 			const cameraOption = document.createElement("option");
 			cameraOption.label = camera.label;
 			cameraOption.value = camera.deviceId;
@@ -77,7 +77,7 @@ class VideoStreamer {
 	}
 
 	changePlaceholderIcon() {
-		this.placeholderElement.innerHTML = '<i class="fa-solid fa-camera"></i>';
+		this.placeholderElement.innerHTML = '<i class="fa-solid fa-user-astronaut"></i>';
 	}
 
 	toggleVideo() {
