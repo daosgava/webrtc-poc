@@ -8,11 +8,11 @@ class VideoStreamer {
 		this.cameras = [];
 		this.stream = undefined;
 		this.listenDeviceChanges();
+		this.listenToVideoDataLoaded();
 	}
 
 	async streamToVideo(selectedCameraId = "") {
 		try {
-			console.log("Selected camera ID: ", selectedCameraId);	
 			const constraints = {
 				audio: { echoCancellation: true },
 				video: {
@@ -24,7 +24,7 @@ class VideoStreamer {
 				constraints,
 			);
 
-			this.setVideoSource();
+			this.videoElement.srcObject = this.stream;
 		} catch (error) {
 			console.error("Error opening video camera.", error);
 		}
@@ -43,8 +43,7 @@ class VideoStreamer {
 		}
 	}
 
-	setVideoSource() {
-		this.videoElement.srcObject = this.stream;
+	listenToVideoDataLoaded() {
 		this.videoElement.addEventListener("loadedmetadata", () => {
 			this.togglePlaceholderVisibility();
 			this.changePlaceholderIcon();
