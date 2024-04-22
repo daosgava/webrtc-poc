@@ -2,28 +2,27 @@ class VideoStreamer {
 	constructor({
 		videoElement,
 		placeholderElement,
-		selectElement,
 	}) {
 		this.videoElement = videoElement;
 		this.placeholderElement = placeholderElement;
-		this.selectElement = selectElement;
 		this.cameras = [];
 		this.stream = undefined;
+		this.listenDeviceChanges();
 	}
 
-	async streamToVideo() {
+	async streamToVideo(selectedCameraId = "") {
 		try {
+			console.log("Selected camera ID: ", selectedCameraId);	
 			const constraints = {
 				audio: { echoCancellation: true },
-				video: {},
+				video: {
+					deviceId: selectedCameraId,
+				},
 			};
 
 			this.stream = await navigator.mediaDevices.getUserMedia(
 				constraints,
 			);
-
-			// Safari doesn't get devices until getUserMedia is called
-			await this.getCameras();
 
 			this.setVideoSource();
 		} catch (error) {
@@ -39,28 +38,9 @@ class VideoStreamer {
 			);
 
 			this.cameras = videoCameras;
-			this.addCamerasToSelectElement();
 		} catch (error) {
 			console.error("Error querying media devices.", error);
 		}
-	}
-
-	addCamerasToSelectElement() {
-		if (!this.cameras) {
-			console.warn("No cameras found.");
-			return;
-		}
-
-		this.selectElement.innerHTML = "";
-
-		this.cameras.forEach((camera) => {
-			if (!camera.deviceId) return;
-			
-			const cameraOption = document.createElement("option");
-			cameraOption.label = camera.label;
-			cameraOption.value = camera.deviceId;
-			this.selectElement.add(cameraOption);
-		});
 	}
 
 	setVideoSource() {
@@ -96,14 +76,10 @@ class VideoStreamer {
 		this.stream = undefined;
 	}
 
-	handleDevicesChange() {
-		updateCameraList();
-	}
-
 	listenDeviceChanges() {
 		navigator.mediaDevices.addEventListener(
 			"devicechange",
-			this.handleDevicesChange,
+			() => this.getCameras(),
 		);
 	}
 }
