@@ -1,6 +1,6 @@
 # WebRTC Media Stream Proof of Concept (POC)
 
-This project demonstrates the use of WebRTC to access and control the camera and microphone. It leverages Bun and Hone for a fast and efficient back-end setup, Tailwind CSS for styling, and modern JavaScript practices, including modules and classes.
+This project demonstrates the use of WebRTC to access and control the camera and microphone. It leverages Bun and ElysiaJS for a fast and efficient back-end setup, Tailwind CSS for styling, and modern JavaScript practices, including modules and classes.
 
 ## Prerequisites
 
@@ -14,10 +14,10 @@ To get the project up and running on your local machine, follow these steps:
 
 ```bash
 # Clone the repository
-git clone https://github.com/daosgava/webrtc-poc.git
+git clone https://github.com/daosgava/webrtc.web-app.git
 
 # Navigate to the project directory
-cd webrtc-poc
+cd webrtc.web-app
 
 # Install dependencies with Bun
 bun install
