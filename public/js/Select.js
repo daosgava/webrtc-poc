@@ -9,8 +9,9 @@ class Select {
 
     listenToSelectChange() {
         this.select.addEventListener("change", async () => {
-            // TODO: Implement camera change
-            console.log("Camera change is not implemented yet.");
+            await this.videoStreamer.streamToVideo(this.select.value);
+            this.videoStreamer.updateVideoState();
+            this.videoStreamer.updateAudioState();
         });
     }
 

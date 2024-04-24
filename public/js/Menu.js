@@ -13,8 +13,8 @@ class Menu {
 
 		this.videoStreamer.setVideoState(this.isVideoButtonActive);
 		this.videoStreamer.setAudioState(this.isAudioButtonActive);
-		this.changeAudioButtonIcon();
-		this.changeVideoButtonIcon();
+		this.updateAudioButtonIcon();
+		this.updateVideoButtonIcon();
 	}
 
 	attachClickEvents() {
@@ -32,7 +32,7 @@ class Menu {
 		try {
 			this.isVideoButtonActive = !this.isVideoButtonActive;
 			this.videoStreamer.setVideoState(this.isVideoButtonActive);
-			this.changeVideoButtonIcon();
+			this.updateVideoButtonIcon();
 		} catch (error) {
 			console.error("Error toggling video.", error);
 		}
@@ -42,13 +42,13 @@ class Menu {
 		try {
 			this.isAudioButtonActive = !this.isAudioButtonActive;
 			this.videoStreamer.setAudioState(this.isAudioButtonActive);
-			this.changeAudioButtonIcon("audio");
+			this.updateAudioButtonIcon();
 		} catch (error) {
 			console.error("Error toggling audio.", error);
 		}
 	}
 
-	changeVideoButtonIcon() {
+	updateVideoButtonIcon() {
 		if (this.isVideoButtonActive) {
 			this.videoButtonIcon.classList.remove("fa-video-slash");
 			this.videoButtonIcon.classList.add("fa-video");
@@ -58,7 +58,7 @@ class Menu {
 		}
 	}
 
-	changeAudioButtonIcon() {
+	updateAudioButtonIcon() {
 		if (this.isAudioButtonActive) {
 			this.audioButtonIcon.classList.remove("fa-microphone-slash");
 			this.audioButtonIcon.classList.add("fa-microphone");

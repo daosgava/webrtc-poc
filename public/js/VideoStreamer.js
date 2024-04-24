@@ -73,10 +73,10 @@ class VideoStreamer {
 
 	setVideoState(isActive) {
 		this.isVideoActive = isActive;
-		this.changeVideoState();
+		this.updateVideoState();
 	}
 
-	changeVideoState() {
+	updateVideoState() {
 		this.stream
 			.getVideoTracks()
 			.forEach((track) => (track.enabled = this.isVideoActive));
@@ -86,10 +86,10 @@ class VideoStreamer {
 
 	setAudioState(isActive) {
 		this.isAudioActive = isActive;
-		this.changeAudioState();
+		this.updateAudioState();
 	}
 
-	changeAudioState() {
+	updateAudioState() {
 		this.stream
 			.getAudioTracks()
 			.forEach((track) => (track.enabled = this.isAudioActive));
