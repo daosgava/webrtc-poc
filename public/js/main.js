@@ -17,19 +17,19 @@ const main = async () => {
 	await videoStreamer.streamToVideo();
 	await videoStreamer.getCameras();
 
-	const menu = new Menu({
+	new Menu({
 		videoStreamer,
 		toggleVideoElement,
 		toggleAudioElement,
 	});
 
-	const select = new Select({
+	new Select({
 		selectElement,
 		videoStreamer,
 	});
 
 	const signalServer = new WebSocket("ws://localhost:8080/ws");
-	const webRTC = new WebRTC({
+	new WebRTC({
 		stream: videoStreamer.stream,
 		signalServer,
 		room: "poc-room",

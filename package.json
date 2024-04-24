@@ -1,11 +1,16 @@
 {
+  "name": "web-app",
+  "version": "1.0.50",
   "scripts": {
-    "dev": "bun --hot run --hot src/index.ts"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "hono": "^4.2.3"
+    "@elysiajs/static": "^1.0.3",
+    "elysia": "latest"
   },
   "devDependencies": {
-    "@types/bun": "latest"
-  }
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
 }

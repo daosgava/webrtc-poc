@@ -1,8 +1,8 @@
-import { Hono } from 'hono';
-import { serveStatic } from "hono/bun";
+import { Elysia } from "elysia";
+import { staticPlugin } from "@elysiajs/static";
 
-const app = new Hono()
+const app = new Elysia().use(staticPlugin({ prefix: '/' })).listen(3000);
 
-app.use("/*", serveStatic({ root: "./public" }));
-
-export default app
+console.log(
+	`🐲: Server is running at ${app.server?.hostname}:${app.server?.port}`,
+);
