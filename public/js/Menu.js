@@ -23,7 +23,7 @@ class Menu {
 
 	handleClickToggleVideo() {
 		try {
-			this.videoStreamer.toggleVideo();
+			this.videoStreamer.setVideoState(!this.videoStreamer.isVideoActive);
 			this.changeIcon("video");
 		} catch (error) {
 			console.error("Error toggling video.", error);
@@ -32,7 +32,7 @@ class Menu {
 
 	handleClickToggleAudio() {
 		try {
-			this.videoStreamer.toggleAudio();
+			this.videoStreamer.setAudioState(!this.videoStreamer.isAudioActive);
 			this.changeIcon("audio");
 		} catch (error) {
 			console.error("Error toggling audio.", error);
