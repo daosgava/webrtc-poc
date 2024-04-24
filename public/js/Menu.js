@@ -2,12 +2,19 @@ class Menu {
 	constructor({ videoStreamer, toggleVideoElement, toggleAudioElement }) {
 		this.toggleVideoButton = toggleVideoElement;
 		this.toggleAudioButton = toggleAudioElement;
+		this.videoButtonIcon = toggleVideoElement.childNodes[0];
+		this.audioButtonIcon = toggleAudioElement.childNodes[0];
 		this.videoStreamer = videoStreamer;
 		this.attachClickEvents();
 
 		// Deactivate video and audio by default
-		this.handleClickToggleVideo();
-		this.handleClickToggleAudio();
+		this.isVideoButtonActive = false;
+		this.isAudioButtonActive = false;
+
+		this.videoStreamer.setVideoState(this.isVideoButtonActive);
+		this.videoStreamer.setAudioState(this.isAudioButtonActive);
+		this.changeAudioButtonIcon();
+		this.changeVideoButtonIcon();
 	}
 
 	attachClickEvents() {
@@ -23,8 +30,9 @@ class Menu {
 
 	handleClickToggleVideo() {
 		try {
-			this.videoStreamer.setVideoState(!this.videoStreamer.isVideoActive);
-			this.changeIcon("video");
+			this.isVideoButtonActive = !this.isVideoButtonActive;
+			this.videoStreamer.setVideoState(this.isVideoButtonActive);
+			this.changeVideoButtonIcon();
 		} catch (error) {
 			console.error("Error toggling video.", error);
 		}
@@ -32,31 +40,32 @@ class Menu {
 
 	handleClickToggleAudio() {
 		try {
-			this.videoStreamer.setAudioState(!this.videoStreamer.isAudioActive);
-			this.changeIcon("audio");
+			this.isAudioButtonActive = !this.isAudioButtonActive;
+			this.videoStreamer.setAudioState(this.isAudioButtonActive);
+			this.changeAudioButtonIcon("audio");
 		} catch (error) {
 			console.error("Error toggling audio.", error);
 		}
 	}
 
-	changeIcon(buttonType) {
-		if (buttonType === "video") {
-			this.changeVideoButtonIcon();
+	changeVideoButtonIcon() {
+		if (this.isVideoButtonActive) {
+			this.videoButtonIcon.classList.remove("fa-video-slash");
+			this.videoButtonIcon.classList.add("fa-video");
 		} else {
-			this.changeAudioButtonIcon();
+			this.videoButtonIcon.classList.remove("fa-video");
+			this.videoButtonIcon.classList.add("fa-video-slash");
 		}
 	}
 
-	changeVideoButtonIcon() {
-		this.toggleVideoButton.childNodes[0].classList.toggle("fa-video");
-		this.toggleVideoButton.childNodes[0].classList.toggle("fa-video-slash");
-	}
-
 	changeAudioButtonIcon() {
-		this.toggleAudioButton.childNodes[0].classList.toggle("fa-microphone");
-		this.toggleAudioButton.childNodes[0].classList.toggle(
-			"fa-microphone-slash",
-		);
+		if (this.isAudioButtonActive) {
+			this.audioButtonIcon.classList.remove("fa-microphone-slash");
+			this.audioButtonIcon.classList.add("fa-microphone");
+		} else {
+			this.audioButtonIcon.classList.remove("fa-microphone");
+			this.audioButtonIcon.classList.add("fa-microphone-slash");
+		}
 	}
 }
 

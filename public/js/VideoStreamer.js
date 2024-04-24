@@ -65,6 +65,12 @@ class VideoStreamer {
 		this.placeholderElement.children[0].classList.add("fa-user-astronaut");
 	}
 
+	showLoadingIcon() {
+		this.placeholderElement.children[0].classList.remove("fa-user-astronaut");
+		this.placeholderElement.children[0].classList.add("fa-spinner");
+		this.placeholderElement.children[0].classList.add("fa-spin");
+	}
+
 	setVideoState(isActive) {
 		this.isVideoActive = isActive;
 		this.changeVideoState();
