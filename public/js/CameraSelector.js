@@ -1,4 +1,4 @@
-class Select {
+class CameraSelector {
     constructor({ selectElement, videoStreamer }) {
         this.select = selectElement;
         this.videoStreamer = videoStreamer;
@@ -32,4 +32,4 @@ class Select {
 	}
 }
 
-export default Select;
+export default CameraSelector;

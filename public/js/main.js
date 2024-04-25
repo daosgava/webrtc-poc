@@ -1,6 +1,6 @@
 import VideoStreamer from "./VideoStreamer.js";
 import Menu from "./Menu.js";
-import Select from "./Select.js";
+import CameraSelector from "./CameraSelector.js";
 import WebRTC from "./WebRTC.js";
 
 const videoElement = document.querySelector("video#streamer");
@@ -23,7 +23,7 @@ const main = async () => {
 		toggleAudioElement,
 	});
 
-	new Select({
+	new CameraSelector({
 		selectElement,
 		videoStreamer,
 	});
