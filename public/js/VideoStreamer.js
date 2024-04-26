@@ -1,13 +1,12 @@
 class VideoStreamer {
-	constructor({ videoElement, placeholderElement }) {
+	constructor({ videoElement, placeholder }) {
 		this.videoElement = videoElement;
-		this.placeholderElement = placeholderElement;
+		this.placeholder = placeholder;
 		this.cameras = [];
 		this.stream = undefined;
 		this.isAudioActive = true;
 		this.isVideoActive = true;
 		this.listenDeviceChanges();
-		this.listenToVideoDataLoaded();
 	}
 
 	async streamToVideo(selectedCameraId = "") {
@@ -42,35 +41,6 @@ class VideoStreamer {
 		}
 	}
 
-	listenToVideoDataLoaded() {
-		this.videoElement.addEventListener("loadedmetadata", () => {
-			this.changePlaceholderVisibility();
-			this.showAvatarIcon();
-		});
-	}
-
-	changePlaceholderVisibility() {
-		if (this.isVideoActive) {
-			this.placeholderElement.classList.add("hidden");
-			this.videoElement.classList.remove("hidden");
-		} else {
-			this.placeholderElement.classList.remove("hidden");
-			this.videoElement.classList.add("hidden");
-		}
-	}
-
-	showAvatarIcon() {
-		this.placeholderElement.children[0].classList.remove("fa-spinner");
-		this.placeholderElement.children[0].classList.remove("fa-spin");
-		this.placeholderElement.children[0].classList.add("fa-user-astronaut");
-	}
-
-	showLoadingIcon() {
-		this.placeholderElement.children[0].classList.remove("fa-user-astronaut");
-		this.placeholderElement.children[0].classList.add("fa-spinner");
-		this.placeholderElement.children[0].classList.add("fa-spin");
-	}
-
 	setVideoState(isActive) {
 		this.isVideoActive = isActive;
 		this.updateVideoState();
@@ -81,7 +51,7 @@ class VideoStreamer {
 			.getVideoTracks()
 			.forEach((track) => (track.enabled = this.isVideoActive));
 
-		this.changePlaceholderVisibility();
+		this.placeholder.changePlaceholderVisibility(this.isVideoActive);
 	}
 
 	setAudioState(isActive) {
