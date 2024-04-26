@@ -3,10 +3,11 @@ const SIGNAL_TYPE = {
 	ANSWER: "answer",
 	CANDIDATE: "candidate",
 };
+const configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
 
 class WebRTC {
 	constructor({ stream, signalServer, room }) {
-		this.peerConnection = new RTCPeerConnection();
+		this.peerConnection = new RTCPeerConnection(configuration);
 		this.stream = stream;
 		this.signalServer = signalServer;
 		this.room = room;
