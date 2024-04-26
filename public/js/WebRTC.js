@@ -1,55 +1,88 @@
+/* 
+	Check the webrtc documentation for more information
+	Google - https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
+	Mozilla - https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
+*/
+
 const SIGNAL_TYPE = {
 	OFFER: "offer",
 	ANSWER: "answer",
 	CANDIDATE: "candidate",
 };
-const configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
+const configuration = {
+	iceServers: [{
+		// TODO: Add TURN server
+		urls: "stun:stun.l.google.com:19302"
+	}],
+};
 
 class WebRTC {
-	constructor({ stream, signalServer, room }) {
-		this.peerConnection = new RTCPeerConnection(configuration);
-		this.stream = stream;
+	constructor({ signalServer, room, connectionType }) {
 		this.signalServer = signalServer;
 		this.room = room;
-		this.addTracksToPeerConnection();
+		this.peerConnection = undefined;
+		this.connectionType = connectionType;
+		this.createConnection();
+	}
+
+	createConnection() {
+		if (this.connectionType === "caller") {
+			this.createCallerConnection();
+		} else {
+			this.createReceiverConnection();
+		}
 		this.sendICECandidates();
-		this.createOffer();
-		this.listenToIncomingMessages();
+		this.listenToCandidates();
+		this.listenToConnectionState();
 	}
 
-	addTracksToPeerConnection() {
-		this.stream.getTracks().forEach((track) => {
-			this.peerConnection.addTrack(track, this.stream);
-		});
+	createCallerConnection() {
+		this.peerConnection = new RTCPeerConnection(configuration);
+		this.listenToAnswers();
 	}
 
-	sendICECandidates() {
-		this.peerConnection.onicecandidate = (event) => {
-			if (event.candidate) {
-				this.signalServer.send(JSON.stringify({
-					type: SIGNAL_TYPE.CANDIDATE,
-					room: this.room,
-					payload: {
-						candidate: event.candidate,
-					},
-				}));
-			}
-		};
+	createReceiverConnection() {
+		this.peerConnection = new RTCPeerConnection(configuration);
+		this.listenToOffer();
 	}
 
 	async createOffer() {
+		if (this.connectionType === "receiver") {
+			console.error("Only caller can create offer.");
+			return;
+		}
 		const offer = await this.peerConnection.createOffer();
 		await this.peerConnection.setLocalDescription(offer);
-		this.signalServer.send(JSON.stringify({
-			type: SIGNAL_TYPE.OFFER,
-			room: this.room,
-			payload: {
-				offer: this.peerConnection.localDescription,
-			},
-		}));
+		this.signalServer.send(
+			JSON.stringify({
+				type: SIGNAL_TYPE.OFFER,
+				room: this.room,
+				payload: {
+					offer,
+				},
+			}),
+		);
 	}
 
-	listenToIncomingMessages() {
+	async createAnswer() {
+		if (this.connectionType === "caller") {
+			console.error("Only receiver can create answer.");
+			return;
+		}
+		const answer = await this.peerConnection.createAnswer();
+		await this.peerConnection.setLocalDescription(answer);
+		this.signalServer.send(
+			JSON.stringify({
+				type: SIGNAL_TYPE.ANSWER,
+				room: this.room,
+				payload: {
+					answer,
+				},
+			}),
+		);
+	}
+
+	listenToAnswers() {
 		this.signalServer.addEventListener("message", (event) => {
 			const { message } = JSON.parse(event.data);
 
@@ -57,10 +90,66 @@ class WebRTC {
 				this.peerConnection.setRemoteDescription(
 					new RTCSessionDescription(message.answer),
 				);
-			} else if (message.type === "candidate") {
-				this.peerConnection.addIceCandidate(
-					new RTCIceCandidate(message.candidate),
+			}
+		});
+	}
+
+	listenToOffer() {
+		this.signalServer.addEventListener("message", (event) => {
+			const { message } = JSON.parse(event.data);
+
+			if (message.type === "offer") {
+				this.peerConnection.setRemoteDescription(
+					new RTCSessionDescription(message.offer),
 				);
+				this.addTracksToPeerConnection();
+				this.sendICECandidates();
+			}
+		});
+	}
+
+	addTracksToPeerConnection(stream) {
+		stream.getTracks().forEach((track) => {
+			this.peerConnection.addTrack(track, stream);
+		});
+	}
+
+	sendICECandidates() {
+		this.peerConnection.addEventListener("icecandidate", (event) => {
+			if (event.candidate) {
+				this.signalServer.send(
+					JSON.stringify({
+						type: SIGNAL_TYPE.CANDIDATE,
+						room: this.room,
+						payload: {
+							candidate: event.candidate,
+						},
+					}),
+				);
+			}
+		});
+	}
+
+	listenToCandidates() {
+		this.signalServer.addEventListener("message", async (event) => {
+			const { message } = JSON.parse(event.data);
+
+			if (message.type === "candidate") {
+				try {
+					await this.peerConnection.addIceCandidate(
+						new RTCIceCandidate(message.iceCandidate),
+					);
+				} catch (e) {
+					console.error("Error adding received ice candidate", e);
+				}
+			}
+		});
+	}
+
+	listenToConnectionState() {
+		this.peerConnection.addEventListener("connectionstatechange", () => {
+			if (this.peerConnection.connectionState === "connected") {
+				console.log("Connected!");
 			}
 		});
 	}

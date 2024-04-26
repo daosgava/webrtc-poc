@@ -34,11 +34,14 @@ const main = async () => {
 	});
 
 	const signalServer = new WebSocket("ws://localhost:8080/ws");
-	new WebRTC({
-		stream: videoStreamer.stream,
+	const webRTC = new WebRTC({
 		signalServer,
 		room: "poc-room",
+		connectionType: "caller",
 	});
+
+	await webRTC.createOffer();
+	addTracksToPeerConnection(videoStreamer.stream)
 };
 
 main();
