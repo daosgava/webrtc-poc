@@ -5,35 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebRTC POC</title>
     <script src="https://kit.fontawesome.com/eb1c665375.js" crossorigin="anonymous" defer></script>
-    <script src="https://cdn.tailwindcss.com" defer></script>
-    <script src="./js/Menu.js" type="module"></script>
-    <script src="./js/CameraSelector.js" type="module"></script>
-    <script src="./js/VideoStreamer.js" type="module"></script>
-    <script src="./js/WebRTC.js" type="module"></script>
-    <script src="./js/Placeholder.js" type="module"></script>
-    <script src="./js/main.js" type="module"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <div id="container">
         <div class="flex flex-col justify-center gap-4 pt-4">
+            <h1 class="text-center text-3xl text-violet-500">WebRTC POC</h1>
             <div class="flex justify-center">
-                <select id="cameras" class="border-2 border-violet-300 w-96 rounded-md" name="cameras"></select>
-            </div>
-            <div class="flex justify-center">
-                <div class="flex h-[18rem] w-96 bg-slate-500 justify-center items-center rounded-md">
-                    <div id="placeholder" class="fa-3x text-white block">
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                    </div>
-                    <video id="streamer" class="rounded-md block hidden" autoplay>
-                        <p>
-                            Your browser doesn't support HTML video.
-                        </p>
-                    </video>
+                <div class="flex gap-8 border-2 p-4">
+                <a href="./streamer.html" class="text-black">Streamer</a>
+                <a href="./viewer.html" class="text-black">Viewer</a>
                 </div>
-            </div>
-            <div class="flex justify-center gap-8">
-                <button id="toggle-video" class="rounded-full bg-violet-500 hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 w-12 h-12 text-white"><i class="fa-solid fa-video"></i></button>
-                <button id="toggle-audio" class="rounded-full bg-violet-500 hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 w-12 h-12 text-white"><i class="fa-solid fa-microphone"></i></button>
             </div>
         </div>
     </div>

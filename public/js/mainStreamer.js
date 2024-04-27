@@ -1,7 +1,7 @@
 import VideoStreamer from "./VideoStreamer.js";
 import Menu from "./Menu.js";
 import CameraSelector from "./CameraSelector.js";
-import WebRTC from "./WebRTC.js";
+import RTCCaller from "./RTCCaller.js";
 import Placeholder from "./Placeholder.js";
 
 const videoElement = document.querySelector("video#streamer");
@@ -34,14 +34,15 @@ const main = async () => {
 	});
 
 	const signalServer = new WebSocket("ws://localhost:8080/ws");
-	const webRTC = new WebRTC({
-		signalServer,
-		room: "poc-room",
-		connectionType: "caller",
+	signalServer.addEventListener("open", () => {
+		console.log("Signal server connected");
+		new RTCCaller({
+			stream: videoStreamer.stream,
+			signalServer,
+			room: "poc-room",
+			videoElement,
+		});
 	});
-
-	await webRTC.createOffer();
-	addTracksToPeerConnection(videoStreamer.stream)
 };
 
 main();

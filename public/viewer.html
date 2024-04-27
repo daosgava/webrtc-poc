@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC POC</title>
+    <script src="https://kit.fontawesome.com/eb1c665375.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./js/constants.js" type="module"></script>
+    <script src="./js/RTCReceiver.js" type="module"></script>
+    <script src="./js/mainViewer.js" type="module"></script>
+</head>
+<body>
+    <div id="container">
+        <div class="flex flex-col justify-center gap-4 pt-4">
+            <div class="flex justify-center">
+                <div class="flex h-[18rem] w-96 bg-slate-500 justify-center items-center rounded-md">
+                    <video id="streamer" class="rounded-md block" autoplay>
+                        <p>
+                            Your browser doesn't support HTML video.
+                        </p>
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
