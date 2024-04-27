@@ -46,7 +46,6 @@ class RTCCaller {
 	listenToAnswers() {
 		this.signalServer.addEventListener("message", async (event) => {
 			const message = JSON.parse(event.data);
-			console.log("Message received", message);
 			if (message.type === SIGNAL_TYPE.ANSWER) {
 				const remoteDesc = new RTCSessionDescription(message.payload.answer);
 				await this.peerConnection.setRemoteDescription(remoteDesc);

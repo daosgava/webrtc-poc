@@ -9,15 +9,18 @@
 </head>
 <body>
     <div id="container">
-        <div class="flex flex-col justify-center gap-4 pt-4">
-            <h1 class="text-center text-3xl text-violet-500">WebRTC POC</h1>
-            <div class="flex justify-center">
-                <div class="flex gap-8 border-2 p-4">
-                <a href="./streamer.html" class="text-black">Streamer</a>
-                <a href="./viewer.html" class="text-black">Viewer</a>
-                </div>
+        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+            <div class="flex lg:flex-1">
+                <a href="#" class="-m-1.5 p-1.5">
+                    <span class="h-8 w-auto">WebRTC</span>
+        
+                </a>
             </div>
-        </div>
+            <div class="lg:flex lg:gap-x-12">
+                <a href="/viewer.html" class="text-sm font-semibold leading-6 text-gray-900">Viewer</a>
+                <a href="/streamer.html" class="text-sm font-semibold leading-6 text-gray-900">Streamer</a>
+            </div>
+        </nav>
     </div>
 </body>
 </html>
