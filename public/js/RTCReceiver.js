@@ -58,7 +58,7 @@ class RTCReceiver {
 		});
 	}
 
-	listenToCandidate() {
+	listenToRemoteCandidate() {
 		this.signalServer.addEventListener("message", async (event) => {
 			const message = JSON.parse(event.data);
 			if (message.type === SIGNAL_TYPE.CANDIDATE) {
