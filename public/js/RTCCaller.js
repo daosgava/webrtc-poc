@@ -27,7 +27,8 @@ class RTCCaller {
 		this.peerConnection = new RTCPeerConnection(configuration);
 		this.joinRoom();
 		this.addTracksToPeerConnection();
-		this.listenToICECandidate();
+		this.listenToLocalCandidate();
+		this.listenToRemoteCandidate();
 		this.createOffer();
 		this.listenToAnswers();
 		this.listenToConnectionState();
@@ -50,7 +51,7 @@ class RTCCaller {
 	listenToAnswers() {
 		this.signalServer.addEventListener("message", async (event) => {
 			const message = JSON.parse(event.data);
-			if (message.type === SIGNAL_TYPE.ANSWER) {
+			if (message.type === SIGNAL_TYPE.ANSWER && !this.peerConnection.remoteDescription) {
 				const remoteDesc = new RTCSessionDescription(message.payload.answer);
 				await this.peerConnection.setRemoteDescription(remoteDesc);
 			}
@@ -67,7 +68,7 @@ class RTCCaller {
 		});
 	}
 
-	listenToICECandidate() {
+	listenToLocalCandidate() {
 		this.peerConnection.onicecandidate = event => {
 			if (event.candidate) {
 				this.signalServer.send(
@@ -81,6 +82,19 @@ class RTCCaller {
 				);
 			}
 		};
+	}
+
+	listenToRemoteCandidate() {
+		this.signalServer.addEventListener("message", async (event) => {
+			const message = JSON.parse(event.data);
+			if (message.type === SIGNAL_TYPE.CANDIDATE) {
+				try {
+					await this.peerConnection.addIceCandidate(message.payload.candidate);
+				} catch (e) {
+					console.error("Error adding received ice candidate", e);
+				}
+			}
+		});
 	}
 
 	joinRoom() {
