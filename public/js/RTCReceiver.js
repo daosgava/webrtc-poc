@@ -3,7 +3,11 @@ import { SIGNAL_TYPE } from "./constants.js";
 const configuration = {
 	iceServers: [
 		{
-			// TODO: Add TURN server
+			urls: "__TURN_URL__",
+			username: "__TURN_USERNAME__",
+			credential: "__TURN_PASSWORD__",
+		},
+		{
 			urls: "stun:stun.l.google.com:19302",
 		},
 	],
@@ -21,7 +25,7 @@ class RTCReceiver {
 	createReceiverConnection() {
 		this.peerConnection = new RTCPeerConnection(configuration);
 		this.joinRoom();
-		this.listenToCandidates();
+		this.listenToCandidate();
 		this.listenToConnectionState();
 		this.listenToOffer();
 		this.listenToTracks();
@@ -31,7 +35,9 @@ class RTCReceiver {
 		this.signalServer.addEventListener("message", async (event) => {
 			const message = JSON.parse(event.data);
 			if (message.type === SIGNAL_TYPE.OFFER) {
-				this.peerConnection.setRemoteDescription(new RTCSessionDescription(message.payload.offer));
+				this.peerConnection.setRemoteDescription(
+					new RTCSessionDescription(message.payload.offer)
+				);
         		const answer = await this.peerConnection.createAnswer();
         		await this.peerConnection.setLocalDescription(answer);
 				this.signalServer.send(
@@ -47,12 +53,12 @@ class RTCReceiver {
 		});
 	}
 
-	listenToCandidates() {
+	listenToCandidate() {
 		this.signalServer.addEventListener("message", async (event) => {
 			const message = JSON.parse(event.data);
 			if (message.type === SIGNAL_TYPE.CANDIDATE) {
 				try {
-					await this.peerConnection.addIceCandidate(message.payload.candidate)
+					await this.peerConnection.addIceCandidate(message.payload.candidate);
 				} catch (e) {
 					console.error("Error adding received ice candidate", e);
 				}

@@ -1,5 +1,5 @@
 class Placeholder {
-	constructor({ videoElement, placeholderElement }) {
+	constructor({ videoElement, placeholderElement, stream }) {
 		this.videoElement = videoElement;
 		this.placeholderElement = placeholderElement;
 		this.listenToVideoDataLoaded();
@@ -7,7 +7,6 @@ class Placeholder {
 
 	listenToVideoDataLoaded() {
 		this.videoElement.addEventListener("loadedmetadata", () => {
-			this.changePlaceholderVisibility();
 			this.showAvatarIcon();
 		});
 	}

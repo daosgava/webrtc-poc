@@ -3,7 +3,11 @@ import { SIGNAL_TYPE } from "./constants.js";
 const configuration = {
 	iceServers: [
 		{
-			// TODO: Add TURN server
+			urls: "__TURN_URL__",
+			username: "__TURN_USERNAME__",
+			credential: "__TURN_PASSWORD__",
+		},
+		{
 			urls: "stun:stun.l.google.com:19302",
 		},
 	],
@@ -21,9 +25,9 @@ class RTCCaller {
 
 	createCallerConnection() {
 		this.peerConnection = new RTCPeerConnection(configuration);
-		this.addTracksToPeerConnection();
 		this.joinRoom();
-		this.sendICECandidates();
+		this.addTracksToPeerConnection();
+		this.listenToICECandidate();
 		this.createOffer();
 		this.listenToAnswers();
 		this.listenToConnectionState();
@@ -56,11 +60,14 @@ class RTCCaller {
 	addTracksToPeerConnection() {
 		console.log("Adding tracks to peer connection", this.stream);
 		this.stream.getTracks().forEach((track) => {
-			this.peerConnection.addTrack(track, this.stream);
+			const senderHasTrack = this.peerConnection.getSenders().find(sender => sender.track === track);
+			if(!senderHasTrack){
+				this.peerConnection.addTrack(track, this.stream);
+			}
 		});
 	}
 
-	sendICECandidates() {
+	listenToICECandidate() {
 		this.peerConnection.onicecandidate = event => {
 			if (event.candidate) {
 				this.signalServer.send(
@@ -68,26 +75,12 @@ class RTCCaller {
 						type: SIGNAL_TYPE.CANDIDATE,
 						room: this.room,
 						payload: {
-							candidate: event.candidate,
+							candidate: event.candidate.toJSON(),
 						},
 					}),
 				);
 			}
 		};
-	}
-
-	listenToCandidates() {
-		this.signalServer.addEventListener("message", async (event) => {
-			const { message } = JSON.parse(event.data);
-
-			if (message.type === SIGNAL_TYPE.CANDIDATE) {
-				try {
-					await this.peerConnection.addIceCandidate(message.iceCandidate);
-				} catch (e) {
-					console.error("Error adding received ice candidate", e);
-				}
-			}
-		});
 	}
 
 	joinRoom() {
@@ -103,8 +96,7 @@ class RTCCaller {
 	listenToConnectionState() {
 		this.peerConnection.addEventListener("connectionstatechange", () => {
 			if (this.peerConnection.connectionState === "connected") {
-				console.log("Connected!");
-				this.addTracksToPeerConnection();
+				console.log("🐲: Connection established");
 			}
 		});
 	}

@@ -8,8 +8,8 @@ class Menu {
 		this.attachClickEvents();
 
 		// Deactivate video and audio by default
-		this.isVideoButtonActive = false;
-		this.isAudioButtonActive = false;
+		this.isVideoButtonActive = true;
+		this.isAudioButtonActive = true;
 
 		this.videoStreamer.setVideoState(this.isVideoButtonActive);
 		this.videoStreamer.setAudioState(this.isAudioButtonActive);

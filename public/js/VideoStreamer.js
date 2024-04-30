@@ -9,13 +9,13 @@ class VideoStreamer {
 		this.listenDeviceChanges();
 	}
 
-	async streamToVideo(selectedCameraId = "") {
+	async streamToVideo(cameraId) {
 		try {
+			// TODO - Add cameraId to constraints
+			const deviceId = cameraId || undefined;
 			const constraints = {
-				audio: { echoCancellation: true, noiseSuppression: true },
-				video: {
-					deviceId: selectedCameraId,
-				},
+				audio: true,
+				video: true,
 			};
 
 			this.stream = await navigator.mediaDevices.getUserMedia(
