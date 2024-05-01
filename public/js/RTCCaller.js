@@ -20,7 +20,7 @@ class RTCCaller {
 		this.room = room;
 		this.video = videoElement;
 		this.peerConnection = undefined;
-		this.createCallerConnection();
+		this.isPeerConnectionActive = false;
 	}
 
 	createCallerConnection() {
@@ -32,6 +32,20 @@ class RTCCaller {
 		this.createOffer();
 		this.listenToAnswers();
 		this.listenToConnectionState();
+	}
+
+	setIsPeerConnectionActive(isActive) {
+		this.isPeerConnectionActive = isActive;
+		if (!isActive) {
+			this.deletePeerConnection();
+		} else {
+			this.createCallerConnection();
+		}
+	}
+
+	deletePeerConnection() {
+		this.peerConnection.close();
+		this.peerConnection = undefined;
 	}
 
 	async createOffer() {
