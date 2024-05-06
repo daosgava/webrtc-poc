@@ -1,7 +1,7 @@
 class CameraSelector {
-    constructor({ selectElement, videoStreamer }) {
+    constructor({ selectElement, mediaStreamer }) {
         this.select = selectElement;
-        this.videoStreamer = videoStreamer;
+        this.mediaStreamer = mediaStreamer;
 
         this.addCamerasToSelect();
         this.listenToSelectChange();
@@ -9,18 +9,18 @@ class CameraSelector {
 
     listenToSelectChange() {
         this.select.addEventListener("change", async () => {
-            await this.videoStreamer.streamToVideo(this.select.value);
-            this.videoStreamer.updateVideoState();
-            this.videoStreamer.updateAudioState();
+            await this.mediaStreamer.streamToVideo(this.select.value);
+            this.mediaStreamer.updateVideoState();
+            this.mediaStreamer.updateAudioState();
         });
     }
 
     addCamerasToSelect(cameraId) {
-		const selectedCameraId = cameraId || this.videoStreamer.cameras[0].deviceId;
+		const selectedCameraId = cameraId || this.mediaStreamer.cameras[0].deviceId;
 
 		this.select.innerHTML = "";
 
-		this.videoStreamer.cameras.forEach((camera) => {
+		this.mediaStreamer.cameras.forEach((camera) => {
 			if (!camera.deviceId) return;
 
 			const cameraOption = document.createElement("option");

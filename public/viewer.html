@@ -7,8 +7,9 @@
     <script src="https://kit.fontawesome.com/eb1c665375.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./js/constants.js" type="module"></script>
-    <script src="./js/RTCReceiver.js" type="module"></script>
-    <script src="./js/mainViewer.js" type="module"></script>
+    <script src="./js/RtcApi.js" type="module"></script>
+    <script src="./js/viewer/Viewer.js" type="module"></script>
+    <script src="./js/viewer/main.js" type="module"></script>
 </head>
 <body>
     <div id="container">
@@ -18,10 +19,6 @@
                     <span class="h-8 w-auto">WebRTC</span>
         
                 </a>
-            </div>
-            <div class="lg:flex lg:gap-x-12">
-                <a href="/viewer.html" class="text-sm font-semibold leading-6 text-gray-900">Viewer</a>
-                <a href="/streamer.html" class="text-sm font-semibold leading-6 text-gray-900">Streamer</a>
             </div>
         </nav>
         <div class="flex flex-col justify-center gap-4 pt-4">
@@ -33,6 +30,14 @@
                         </p>
                     </video>
                 </div>
+            </div>
+            <div class="flex justify-center gap-8">
+                <button id="call"
+                    class="rounded-md bg-green-500 hover:bg-green-600 active:bg-green-700 focus:outline-none focus:ring focus:ring-green-300 text-white p-2">
+                    Call</button>
+                <button id="drop"
+                    class="rounded-md bg-violet-500 hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 text-white p-2">
+                    Drop</button>
             </div>
         </div>
     </div>

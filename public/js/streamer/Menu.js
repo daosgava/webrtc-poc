@@ -11,8 +11,8 @@ const generateClasses = (color) => [
 
 class Menu {
 	constructor({
-		videoStreamer,
-		rtcCaller,
+		mediaStreamer,
+		streamer,
 		toggleVideoElement,
 		toggleAudioElement,
 		toggleStreamElement,
@@ -22,8 +22,8 @@ class Menu {
 		this.toggleStreamButton = toggleStreamElement;
 		this.videoButtonIcon = toggleVideoElement.childNodes[0];
 		this.audioButtonIcon = toggleAudioElement.childNodes[0];
-		this.videoStreamer = videoStreamer;
-		this.rtcCaller = rtcCaller;
+		this.mediaStreamer = mediaStreamer;
+		this.streamer = streamer;
 		this.attachClickEvents();
 
 		// Deactivate video and audio by default
@@ -31,8 +31,8 @@ class Menu {
 		this.isAudioButtonActive = true;
 		this.isStreamButtonActive = false;
 
-		this.videoStreamer.setVideoState(this.isVideoButtonActive);
-		this.videoStreamer.setAudioState(this.isAudioButtonActive);
+		this.mediaStreamer.setVideoState(this.isVideoButtonActive);
+		this.mediaStreamer.setAudioState(this.isAudioButtonActive);
 		this.updateAudioButtonIcon();
 		this.updateVideoButtonIcon();
 		this.updateStreamButton();
@@ -56,7 +56,7 @@ class Menu {
 	handleClickToggleVideo() {
 		try {
 			this.isVideoButtonActive = !this.isVideoButtonActive;
-			this.videoStreamer.setVideoState(this.isVideoButtonActive);
+			this.mediaStreamer.setVideoState(this.isVideoButtonActive);
 			this.updateVideoButtonIcon();
 		} catch (error) {
 			console.error("Error toggling video.", error);
@@ -66,7 +66,7 @@ class Menu {
 	handleClickToggleAudio() {
 		try {
 			this.isAudioButtonActive = !this.isAudioButtonActive;
-			this.videoStreamer.setAudioState(this.isAudioButtonActive);
+			this.mediaStreamer.setAudioState(this.isAudioButtonActive);
 			this.updateAudioButtonIcon();
 		} catch (error) {
 			console.error("Error toggling audio.", error);
@@ -76,7 +76,7 @@ class Menu {
 	handleClickToggleStream() {
 		try {
 			this.isStreamButtonActive = !this.isStreamButtonActive;
-			this.rtcCaller.setIsPeerConnectionActive(this.isStreamButtonActive);
+			this.streamer.changeStreamerState(this.isStreamButtonActive);
 			this.updateStreamButton();
 		} catch (error) {
 			console.error("Error toggling stream.", error);

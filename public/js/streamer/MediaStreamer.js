@@ -1,4 +1,4 @@
-class VideoStreamer {
+class MediaStreamer {
 	constructor({ videoElement, placeholder }) {
 		this.videoElement = videoElement;
 		this.placeholder = placeholder;
@@ -77,4 +77,4 @@ class VideoStreamer {
 	}
 }
 
-export default VideoStreamer;
+export default MediaStreamer;

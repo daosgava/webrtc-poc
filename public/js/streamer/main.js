@@ -1,7 +1,8 @@
-import VideoStreamer from "./VideoStreamer.js";
+import RtcApi from "../RtcApi.js";
+import MediaStreamer from "./MediaStreamer.js";
 import Menu from "./Menu.js";
 import CameraSelector from "./CameraSelector.js";
-import RTCCaller from "./RTCCaller.js";
+import Streamer from "./Streamer.js";
 import Placeholder from "./Placeholder.js";
 
 const signalServer = new WebSocket("ws://localhost:8080/ws");
@@ -17,23 +18,26 @@ const main = async () => {
 		videoElement,
 		placeholderElement,
 	});
-	const videoStreamer = new VideoStreamer({
+	const mediaStreamer = new MediaStreamer({
 		videoElement,
 		placeholder,
 	});
-	await videoStreamer.streamToVideo();
-	await videoStreamer.getCameras();
+	await mediaStreamer.streamToVideo();
+	await mediaStreamer.getCameras();
 
-	const rtcCaller = new RTCCaller({
-		stream: videoStreamer.stream,
+	const rtcApi = new RtcApi();
+
+	const streamer = new Streamer({
+		stream: mediaStreamer.stream,
 		signalServer,
 		room: "poc-room",
 		videoElement,
+		rtcApi,
 	});
 
 	new Menu({
-		videoStreamer,
-		rtcCaller,
+		mediaStreamer,
+		streamer,
 		toggleVideoElement,
 		toggleAudioElement,
 		toggleStreamElement,
@@ -41,7 +45,7 @@ const main = async () => {
 
 	new CameraSelector({
 		selectElement,
-		videoStreamer,
+		mediaStreamer,
 	});
 };
 
