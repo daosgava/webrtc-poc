@@ -31,21 +31,12 @@ class RtcApi {
 	}
 
 	async setRemoteDescription(answer) {
-		if (!this.peerConnection.remoteDescription) {
-			const remoteDesc = new RTCSessionDescription(answer);
-			await this.peerConnection.setRemoteDescription(remoteDesc);
-
-			return;
-		}
-		console.warn("Remote description already set.");
+		const remoteDesc = new RTCSessionDescription(answer);
+		await this.peerConnection.setRemoteDescription(remoteDesc);
 	}
 
 	async createAnswer(offer) {
-		if(this.peerConnection.signalingState !== "stable") {
-			console.warn("Signaling state is not stable.");
-			return;
-		}
-		this.peerConnection.setRemoteDescription(offer);
+		this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
 		const answer = await this.peerConnection.createAnswer();
 		await this.peerConnection.setLocalDescription(answer);
 

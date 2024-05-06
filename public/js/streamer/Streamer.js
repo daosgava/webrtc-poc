@@ -9,18 +9,17 @@ class Streamer {
 	}
 
 	async MakeACall() {
+		this.joinRoom();
 		await this.rtcApi.createPeerConnection();
 		this.rtcApi.addTracksToPeerConnection(this.stream);
 		this.rtcApi.watchConnectionState();
-		this.joinRoom();
+		this.sendOffer();
 		this.sendLocalCandidate();
 		this.getRemoteCandidate();
-		this.sendOffer();
 		this.processAnswer();
 	}
 
 	changeStreamerState(isActive) {
-		console.log("Streamer state changed", isActive);
 		if (!isActive) {
 			this.rtcApi.closePeerConnection();
 		} else {
@@ -51,14 +50,15 @@ class Streamer {
 		});
 		
 	}
-	listenToAnswers() {
-		this.signalServer.addEventListener("message", async (event) => {
-			const message = JSON.parse(event.data);
-			if (message.type === SIGNAL_TYPE.ANSWER && !this.peerConnection.remoteDescription) {
-				const remoteDesc = new RTCSessionDescription(message.payload.answer);
-				await this.peerConnection.setRemoteDescription(remoteDesc);
-			}
-		});
+
+	joinRoom() {
+		this.signalServer.send(
+			JSON.stringify({
+				type: SIGNAL_TYPE.JOIN,
+				room: this.room,
+				payload: {},
+			}),
+		);
 	}
 
 	sendLocalCandidate() {
@@ -77,16 +77,6 @@ class Streamer {
 		}
 
 		this.rtcApi.onICECandidate(callback);
-	}
-
-	joinRoom() {
-		this.signalServer.send(
-			JSON.stringify({
-				type: SIGNAL_TYPE.JOIN,
-				room: this.room,
-				payload: {},
-			}),
-		);
 	}
 
 	getRemoteCandidate() {

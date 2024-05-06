@@ -14,13 +14,13 @@ class Viewer {
 	}
 
 	async MakeACall() {
+		this.joinRoom();
 		await this.rtcApi.createPeerConnection();
 		this.rtcApi.watchConnectionState();
+		this.sendAnswer();
 		this.addTracksToStream();
-		this.joinRoom();
 		this.getRemoteCandidate();
 		this.sendLocalCandidate();
-		this.sendAnswer();
 	}
 
 	changeViewerState(isActive) {
@@ -49,21 +49,6 @@ class Viewer {
 		});
 	}
 
-	getRemoteCandidate() {
-		this.signalServer.addEventListener("message", async (event) => {
-			const message = JSON.parse(event.data);
-			if (message.type === SIGNAL_TYPE.CANDIDATE) {
-				try {
-					await this.rtcApi.addCandidate(
-						message.payload.candidate,
-					);
-				} catch (e) {
-					console.error("Error adding received ice candidate", e);
-				}
-			}
-		});
-	}
-
 	joinRoom() {
 		this.signalServer.send(
 			JSON.stringify({
@@ -87,7 +72,6 @@ class Viewer {
 	sendLocalCandidate() {
 		const callback = (event) => {
 			if (event.candidate) {
-				console.log("Sending local candidate");
 				this.signalServer.send(
 					JSON.stringify({
 						type: SIGNAL_TYPE.CANDIDATE,
@@ -101,6 +85,21 @@ class Viewer {
 		}
 
 		this.rtcApi.onICECandidate(callback);
+	}
+
+	getRemoteCandidate() {
+		this.signalServer.addEventListener("message", async (event) => {
+			const message = JSON.parse(event.data);
+			if (message.type === SIGNAL_TYPE.CANDIDATE) {
+				try {
+					await this.rtcApi.addCandidate(
+						message.payload.candidate,
+					);
+				} catch (e) {
+					console.error("Error adding received ice candidate", e);
+				}
+			}
+		});
 	}
 }
 
