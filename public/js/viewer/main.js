@@ -3,12 +3,10 @@ import RtcApi from "../RtcApi.js";
 
 const signalServer = new WebSocket("ws://localhost:8080/ws");
 const videoElement = document.querySelector("video#streamer");
-const callButtonElement = document.querySelector("button#call");
-const dropButtonElement = document.querySelector("button#drop");
 
 const main = () => {
 	const rtcApi = new RtcApi();
-	signalServer.addEventListener("open", () => {
+	signalServer.addEventListener("open", async () => {
 		const viewer = new Viewer({
 			videoElement,
 			signalServer,
@@ -16,13 +14,7 @@ const main = () => {
 			rtcApi,
 		});
 
-		callButtonElement.addEventListener("click", () => {
-			viewer.changeViewerState(true);
-		});
-
-		dropButtonElement.addEventListener("click", () => {
-			viewer.changeViewerState(false);
-		});
+		//await viewer.MakeACall();
 	});
 };
 

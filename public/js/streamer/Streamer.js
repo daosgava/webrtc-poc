@@ -6,17 +6,21 @@ class Streamer {
 		this.signalServer = signalServer;
 		this.room = room;
 		this.rtcApi = rtcApi;
+		this.offer = undefined;
 	}
 
 	async MakeACall() {
-		this.joinRoom();
 		await this.rtcApi.createPeerConnection();
+		this.joinRoom();
 		this.rtcApi.addTracksToPeerConnection(this.stream);
-		this.rtcApi.watchConnectionState();
-		this.sendOffer();
 		this.sendLocalCandidate();
 		this.getRemoteCandidate();
+		await this.createOffer();
+		this.sendOffer();
+		this.sendAnswer();
 		this.processAnswer();
+		this.sendOfferToNewUser();
+		this.rtcApi.watchConnectionState();
 	}
 
 	changeStreamerState(isActive) {
@@ -27,9 +31,14 @@ class Streamer {
 		}
 	}
 
-	async sendOffer() {
-		const offer = await this.rtcApi.createOffer();
+	async createOffer() {
+		if (!this.offer) {
+			this.offer = await this.rtcApi.createOffer();
+		}
+	}
 
+	sendOffer() {
+		const offer = this.offer;
 		this.signalServer.send(
 			JSON.stringify({
 				type: SIGNAL_TYPE.OFFER,
@@ -41,11 +50,33 @@ class Streamer {
 		);
 	}
 
+	sendAnswer() {
+		this.signalServer.addEventListener("message", async (event) => {
+			const message = JSON.parse(event.data);
+			if (message.type === SIGNAL_TYPE.OFFER) {
+				const answer = await this.rtcApi.createAnswer(message.payload.offer);
+				this.signalServer.send(
+					JSON.stringify({
+						type: SIGNAL_TYPE.ANSWER,
+						room: this.room,
+						payload: {
+							answer,
+						},
+					}),
+				);
+			}
+		});
+	}
+
 	processAnswer() {
 		this.signalServer.addEventListener("message", async (event) => {
 			const message = JSON.parse(event.data);
 			if (message.type === SIGNAL_TYPE.ANSWER) {
-				await this.rtcApi.setRemoteDescription(message.payload.answer);
+				try {
+					await this.rtcApi.setRemoteDescription(message.payload.answer);
+				} catch (e) {
+					console.error("Error setting remote description", e);
+				}
 			}
 		});
 		
@@ -59,6 +90,15 @@ class Streamer {
 				payload: {},
 			}),
 		);
+	}
+
+	sendOfferToNewUser() {
+		this.signalServer.addEventListener("message", async (event) => {
+			const message = JSON.parse(event.data);
+			if (message.type === SIGNAL_TYPE.JOIN) {
+				this.sendOffer();
+			}
+		});
 	}
 
 	sendLocalCandidate() {

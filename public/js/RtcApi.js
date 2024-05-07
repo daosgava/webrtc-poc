@@ -49,17 +49,12 @@ class RtcApi {
 
 	addTracksToPeerConnection(stream) {
 		stream.getTracks().forEach((track) => {
-			const senderHasTrack = this.peerConnection
-				.getSenders()
-				.find((sender) => sender.track === track);
-			if (!senderHasTrack) {
-				this.peerConnection.addTrack(track, stream);
-			}
+			this.peerConnection.addTrack(track, stream);
 		});
 	}
 
 	setOnTrack(callback) {
-		this.peerConnection.ontrack = callback;
+		this.peerConnection.addEventListener('track', callback);
 	}
 
 	closePeerConnection() {

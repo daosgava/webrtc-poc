@@ -14,11 +14,11 @@ class Viewer {
 	}
 
 	async MakeACall() {
-		this.joinRoom();
 		await this.rtcApi.createPeerConnection();
 		this.rtcApi.watchConnectionState();
-		this.sendAnswer();
 		this.addTracksToStream();
+		this.joinRoom();
+		this.sendAnswer();
 		this.getRemoteCandidate();
 		this.sendLocalCandidate();
 	}
@@ -59,7 +59,7 @@ class Viewer {
 	}
 
 	addTracksToStream() {
-		const callback = (event) => {
+		const callback = async (event) => {
 			const [streams] = event.streams;
 			streams.getTracks().forEach((track) => {
 				this.stream.addTrack(track);
