@@ -8,7 +8,7 @@
     <script src="https://kit.fontawesome.com/eb1c665375.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./js/constants.js" type="module"></script>
-    <script src="./js/RtcApi.js" type="module"></script>
+    <script src="./js/createPeerConnection.js" type="module"></script>
     <script src="./js/viewer/Viewer.js" type="module"></script>
     <script src="./js/viewer/main.js" type="module"></script>
 </head>
@@ -17,15 +17,16 @@
         <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
             <div class="flex lg:flex-1">
                 <a href="/" class="-m-1.5 p-1.5">
-                    <span class="h-8 w-auto">WebRTC</span>
+                    <span class="h-8 w-auto">Web🐲RTC</span>
                 </a>
             </div>
-            <div class="lg:flex gap-x-12">
-                <a href="/viewer.html" class="text-sm font-semibold leading-6 text-gray-900">Viewer</a>
-                <span> | </span>
-                <a href="/streamer.html" class="text-sm font-semibold leading-6 text-gray-900">Streamer</a>
-            </div>
         </nav>
+        <div class="flex h-full items-center justify-center">
+            <div class="grid grid-cols-2 divide-x text-center">
+                <a href="/viewer.html" class="text-md leading-6 text-gray-900 w-48 border-b-2 border-sky-200">viewer</a>
+                <a href="/streamer.html" class="text-md leading-6 text-gray-900 w-48 hover:border-b-2 hover:border-b-sky-200">streamer</a>
+            </div>
+        </div>
         <div class="flex flex-col justify-center gap-4 pt-4">
             <div class="flex justify-center">
                 <div class="flex h-[18rem] w-96 bg-slate-500 justify-center items-center rounded-md">
