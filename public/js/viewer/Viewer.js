@@ -1,4 +1,5 @@
 import { SIGNAL_TYPE } from "../constants.js";
+import createPeerConnection from "../createPeerConnection.js";
 
 class Viewer {
 	constructor({ signalServer, room, videoElement }) {
@@ -12,43 +13,13 @@ class Viewer {
 	}
 
 	async createConnection() {
-		this.peerConnection = await createPeerConnection();
-		this.peerConnection.onconnectionstatechange = () => {
-			console.log(
-				"Connection state changed: ",
-				this.peerConnection.connectionState,
-			);
-			if (this.peerConnection.connectionState === "connected") {
-				console.log("🐲: Connection established");
-			}
-		};
-
 		const stream = new MediaStream();
 		this.video.srcObject = stream;
 
-		stream.getTracks().forEach((track) => {
-			this.peerConnection.addTrack(track, stream);
-		});
-
-		this.peerConnection.ontrack = (event) => {
-			const [streams] = event.streams;
-			streams.getTracks().forEach((track) => {
-				stream.addTrack(track);
-			});
-		};
-		this.peerConnection.onicecandidate = async (event) => {
-			if (event.candidate) {
-				this.signalServer.send(
-					JSON.stringify({
-						type: SIGNAL_TYPE.CANDIDATE,
-						room: this.room,
-						payload: {
-							candidate: event.candidate.toJSON(),
-						},
-					}),
-				);
-			}
-		};
+		this.peerConnection = await createPeerConnection();
+		this.watchConnectionState();
+		this.handleOnTrack(stream);
+		this.handleICECandidate();
 	}
 
 	async sendOffer() {
@@ -120,6 +91,49 @@ class Viewer {
 		} catch (e) {
 			console.error("Error adding received ice candidate", e);
 		}
+	}
+
+	watchConnectionState() {
+		this.peerConnection.onconnectionstatechange = () => {
+			console.log(
+				"Connection state changed: ",
+				this.peerConnection.connectionState,
+			);
+			if (this.peerConnection.connectionState === "connected") {
+				console.log("🐲: Connection established");
+			}
+		};
+	}
+
+	addStreamToPeerConnection() {
+		this.stream.getTracks().forEach((track) => {
+			this.peerConnection.addTrack(track, this.stream);
+		});
+	}
+
+	handleICECandidate() {
+		this.peerConnection.onicecandidate = async (event) => {
+			if (event.candidate) {
+				this.signalServer.send(
+					JSON.stringify({
+						type: SIGNAL_TYPE.CANDIDATE,
+						room: this.room,
+						payload: {
+							candidate: event.candidate.toJSON(),
+						},
+					}),
+				);
+			}
+		};
+	}
+
+	handleOnTrack(stream) {
+		this.peerConnection.ontrack = (event) => {
+			const [streams] = event.streams;
+			streams.getTracks().forEach((track) => {
+				stream.addTrack(track);
+			});
+		};
 	}
 }
 
