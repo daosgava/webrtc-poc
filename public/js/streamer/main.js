@@ -1,4 +1,3 @@
-import RtcApi from "../RtcApi.js";
 import MediaStreamer from "./MediaStreamer.js";
 import Menu from "./Menu.js";
 import CameraSelector from "./CameraSelector.js";
@@ -25,14 +24,11 @@ const main = async () => {
 	await mediaStreamer.streamToVideo();
 	await mediaStreamer.getCameras();
 
-	const rtcApi = new RtcApi();
-
 	const streamer = new Streamer({
 		stream: mediaStreamer.stream,
 		signalServer,
 		room: "poc-room",
 		videoElement,
-		rtcApi,
 	});
 
 	new Menu({

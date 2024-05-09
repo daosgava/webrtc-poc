@@ -1,44 +1,60 @@
 import { SIGNAL_TYPE } from "../constants.js";
+import createPeerConnection from "../createPeerConnection.js";
 
 class Streamer {
-	constructor({ stream, signalServer, room, rtcApi }) {
+	constructor({ stream, signalServer, room }) {
 		this.stream = stream;
 		this.signalServer = signalServer;
 		this.room = room;
-		this.rtcApi = rtcApi;
 		this.offer = undefined;
-	}
-
-	async MakeACall() {
-		await this.rtcApi.createPeerConnection();
+		this.peerConnection = undefined;
+		this.isBroadcasting = false;
 		this.joinRoom();
-		this.rtcApi.addTracksToPeerConnection(this.stream);
-		this.sendLocalCandidate();
-		this.getRemoteCandidate();
-		await this.createOffer();
-		this.sendOffer();
-		this.sendAnswer();
-		this.processAnswer();
-		this.sendOfferToNewUser();
-		this.rtcApi.watchConnectionState();
+		this.handleMessage();
 	}
 
-	changeStreamerState(isActive) {
-		if (!isActive) {
-			this.rtcApi.closePeerConnection();
-		} else {
-			this.MakeACall();
+	async changeStreamerState(isActive) {
+		this.peerConnection?.close();
+		this.peerConnection = undefined;
+		if (isActive) {
+			this.isBroadcasting = true;
+			await this.sendOffer();
 		}
 	}
 
-	async createOffer() {
-		if (!this.offer) {
-			this.offer = await this.rtcApi.createOffer();
-		}
+	async createConnection() {
+		this.peerConnection = await createPeerConnection();
+		this.peerConnection.onconnectionstatechange = () => {
+			console.log(
+				"Connection state changed: ",
+				this.peerConnection.connectionState,
+			);
+			if (this.peerConnection.connectionState === "connected") {
+				console.log("🐲: Connection established");
+			}
+		};
+		this.stream.getTracks().forEach((track) => {
+			this.peerConnection.addTrack(track, this.stream);
+		});
+		this.peerConnection.onicecandidate = async (event) => {
+			if (event.candidate) {
+				this.signalServer.send(
+					JSON.stringify({
+						type: SIGNAL_TYPE.CANDIDATE,
+						room: this.room,
+						payload: {
+							candidate: event.candidate.toJSON(),
+						},
+					}),
+				);
+			}
+		};
 	}
 
-	sendOffer() {
-		const offer = this.offer;
+	async sendOffer() {
+		await this.createConnection();
+		const offer = await this.peerConnection.createOffer();
+		await this.peerConnection.setLocalDescription(offer);;
 		this.signalServer.send(
 			JSON.stringify({
 				type: SIGNAL_TYPE.OFFER,
@@ -50,36 +66,44 @@ class Streamer {
 		);
 	}
 
-	sendAnswer() {
-		this.signalServer.addEventListener("message", async (event) => {
-			const message = JSON.parse(event.data);
+	async sendAnswer(offer) {
+		await this.createConnection();
+		await this.peerConnection.setRemoteDescription(offer);
+		const answer = await this.peerConnection.createAnswer();
+		await this.peerConnection.setLocalDescription(answer);
+		this.signalServer.send(
+			JSON.stringify({
+				type: SIGNAL_TYPE.ANSWER,
+				room: this.room,
+				payload: {
+					answer,
+				},
+			}),
+		);
+	}
+
+	handleMessage() {
+		this.signalServer.addEventListener("message", (event) => {
+			const message = JSON.parse(event.data);;
+			if (message.type === SIGNAL_TYPE.JOIN && this.isBroadcasting) {
+				this.sendOffer();
+			}
 			if (message.type === SIGNAL_TYPE.OFFER) {
-				const answer = await this.rtcApi.createAnswer(message.payload.offer);
-				this.signalServer.send(
-					JSON.stringify({
-						type: SIGNAL_TYPE.ANSWER,
-						room: this.room,
-						payload: {
-							answer,
-						},
-					}),
-				);
+				this.sendAnswer(message.payload.offer);
+			}
+			if (message.type === SIGNAL_TYPE.ANSWER) {
+				this.addAnswer(message.payload.answer);
+			}
+			if (message.type === SIGNAL_TYPE.CANDIDATE) {
+				this.addCandidate(message.payload.candidate);
 			}
 		});
 	}
 
-	processAnswer() {
-		this.signalServer.addEventListener("message", async (event) => {
-			const message = JSON.parse(event.data);
-			if (message.type === SIGNAL_TYPE.ANSWER) {
-				try {
-					await this.rtcApi.setRemoteDescription(message.payload.answer);
-				} catch (e) {
-					console.error("Error setting remote description", e);
-				}
-			}
-		});
-		
+	async addAnswer(answer) {
+		if (!this.peerConnection.currentRemoteDescription) {
+			await this.peerConnection.setRemoteDescription(answer);
+		}
 	}
 
 	joinRoom() {
@@ -92,46 +116,12 @@ class Streamer {
 		);
 	}
 
-	sendOfferToNewUser() {
-		this.signalServer.addEventListener("message", async (event) => {
-			const message = JSON.parse(event.data);
-			if (message.type === SIGNAL_TYPE.JOIN) {
-				this.sendOffer();
-			}
-		});
-	}
-
-	sendLocalCandidate() {
-		const callback = (event) => {
-			if (event.candidate) {
-				this.signalServer.send(
-					JSON.stringify({
-						type: SIGNAL_TYPE.CANDIDATE,
-						room: this.room,
-						payload: {
-							candidate: event.candidate.toJSON(),
-						},
-					}),
-				);
-			}
+	async addCandidate(candidate) {
+		try {
+			await this.peerConnection?.addIceCandidate(candidate);
+		} catch (e) {
+			console.error("Error adding received ice candidate", e);
 		}
-
-		this.rtcApi.onICECandidate(callback);
-	}
-
-	getRemoteCandidate() {
-		this.signalServer.addEventListener("message", async (event) => {
-			const message = JSON.parse(event.data);
-			if (message.type === SIGNAL_TYPE.CANDIDATE) {
-				try {
-					await this.rtcApi.addCandidate(
-						message.payload.candidate,
-					);
-				} catch (e) {
-					console.error("Error adding received ice candidate", e);
-				}
-			}
-		});
 	}
 }
 
