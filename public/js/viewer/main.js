@@ -17,6 +17,16 @@ const main = async () => {
 			sendMessageButton,
 		});
 	});
+	window.onload = () => {
+		if (sessionStorage.getItem("shouldRedirect")) {
+			window.location.href = "index.html";
+			sessionStorage.removeItem("shouldRedirect");
+		}
+	};
+
+	window.onbeforeunload = () => {
+		sessionStorage.setItem("shouldRedirect", "true");
+	};
 };
 
 main();
