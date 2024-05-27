@@ -149,25 +149,30 @@ class Streamer {
 		};
 	}
 
+	createMessageBubble( message, isLocal ) {
+		const messageContainer = document.createElement("div");
+		messageContainer.classList.add("flex", `${isLocal ? "justify-end" : "justify-start"}`, "w-full", "mb-2");
+		const newMessage = document.createElement("p");
+		newMessage.classList.add(`${isLocal ? "text-end" : "text-start"}`, `bg-${isLocal ? "blue" : "slate"}-400`, "text-white", "rounded-xl",  "p-1", "max-w-[60%]", "w-auto");
+		newMessage.textContent = message;
+		messageContainer.append(newMessage);
+
+		return messageContainer;
+	}
+
 	createDataChannel() {
 		this.dataChannel = this.peerConnection.createDataChannel("chat");
 		this.dataChannel.onmessage = (event) => {
-			console.log("Message received: ", event.data);
-
-			const newMessage = document.createElement("p");
-			newMessage.textContent = event.data;
+			const newMessage = this.createMessageBubble(event.data, false);
 			this.messageBox.append(newMessage);
 		};
 		this.dataChannel.onopen = () => {
-			console.log("Data channel opened.");
-
+			this.messageBox.innerHTML = "";
 			this.messageInput.disabled = false;
 			this.messageInput.focus();
 			this.sendMessageButton.disabled = false;
 		};
 		this.dataChannel.onclose = () => {
-			console.log("Data channel closed.");
-
 			this.messageInput.disabled = true;
 			this.sendMessageButton.disabled = true;
 		};
@@ -180,8 +185,8 @@ class Streamer {
 				return;
 			}
 			this.dataChannel.send(this.messageInput.value);
-			const newMessage = document.createElement("p");
-			newMessage.textContent = this.messageInput.value;
+
+			const newMessage = this.createMessageBubble(this.messageInput.value, true);
 			this.messageBox.append(newMessage);
 			this.messageInput.value = "";
 		});
