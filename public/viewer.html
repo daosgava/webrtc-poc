@@ -1,43 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebRTC POC</title>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-    <script src="https://kit.fontawesome.com/eb1c665375.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="./js/constants.js" type="module"></script>
-    <script src="./js/createPeerConnection.js" type="module"></script>
-    <script src="./js/viewer/Viewer.js" type="module"></script>
-    <script src="./js/viewer/main.js" type="module"></script>
-</head>
-<body>
-    <div id="container">
-        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-            <div class="flex lg:flex-1">
-                <a href="/" class="-m-1.5 p-1.5">
-                    <span class="h-8 w-auto">Web🐲RTC</span>
-                </a>
-            </div>
-        </nav>
-        <div class="flex h-full items-center justify-center">
-            <div class="grid grid-cols-2 divide-x text-center">
-                <a href="/viewer.html" class="text-md leading-6 text-gray-900 w-48 border-b-2 border-sky-200">viewer</a>
-                <a href="/streamer.html" class="text-md leading-6 text-gray-900 w-48 hover:border-b-2 hover:border-b-sky-200">streamer</a>
-            </div>
-        </div>
-        <div class="flex flex-col justify-center gap-4 pt-4">
-            <div class="flex justify-center">
-                <div class="flex h-[18rem] w-96 bg-slate-500 justify-center items-center rounded-md">
-                    <video id="streamer" class="rounded-md block" autoplay playsinline>
-                        <p>
-                            Your browser doesn't support HTML video.
-                        </p>
-                    </video>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>WebRTC POC</title>
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+		<script
+			src="https://kit.fontawesome.com/eb1c665375.js"
+			crossorigin="anonymous"
+		></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script src="./js/constants.js" type="module"></script>
+		<script src="./js/createPeerConnection.js" type="module"></script>
+		<script src="./js/viewer/Viewer.js" type="module"></script>
+		<script src="./js/viewer/main.js" type="module"></script>
+	</head>
+	<body>
+		<div id="container">
+			<nav
+				class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+				aria-label="Global"
+			>
+				<div class="flex lg:flex-1">
+					<a href="/" class="-m-1.5 p-1.5">
+						<span class="h-8 w-auto">Web🐲RTC</span>
+					</a>
+				</div>
+			</nav>
+			<div class="flex h-full items-center justify-center">
+				<div class="grid grid-cols-2 divide-x text-center">
+					<a
+						href="/viewer.html"
+						class="text-md leading-6 text-gray-900 w-48 border-b-2 border-blue-500"
+						>viewer</a
+					>
+					<a
+						href="/streamer.html"
+						class="text-md leading-6 text-gray-900 w-48 hover:border-b-2 hover:border-b-blue-500"
+						>streamer</a
+					>
+				</div>
+			</div>
+			<div class="flex flex-col justify-center gap-4 pt-4">
+				<div class="flex justify-center">
+					<div
+						class="flex h-[18rem] w-96 bg-slate-500 justify-center items-center rounded-md"
+					>
+						<video
+							id="streamer"
+							class="rounded-md block"
+							autoplay
+							playsinline
+						>
+							<p>Your browser doesn't support HTML video.</p>
+						</video>
+					</div>
+				</div>
+			</div>
+			<div class="flex justify-center mt-4 gap-4 pt-4">
+				<div class="flex justify-center flex-col">
+					<div
+						class="px-4 py-2 flex-col border h-[18rem] w-96 border-gray-300 rounded-md overflow-y-scroll"
+						id="message-box"
+					>
+						<p class="text-gray-400">No messages</p>
+					</div>
+					<div class="flex mt-4 w-96">
+						<input
+							type="text"
+							class="px-4 py-2 w-full border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:border-transparent enabled:hover:border-gray-400"
+							placeholder="Enter text"
+							id="message"
+							disabled
+						/>
+						<button
+							id="send-message"
+							class="bg-gradient-to-r from-blue-500 to-sky-500 hover:from-sky-600 hover:to-blue-600 text-white p-2 rounded-r-lg focus:outline-none disabled:opacity-50"
+							disabled
+						>
+							Send
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

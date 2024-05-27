@@ -1,68 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebRTC POC</title>
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-    <script src="https://kit.fontawesome.com/eb1c665375.js" crossorigin="anonymous"></script>
-    
-    <script src="./js/constants.js" type="module"></script>
-    <script src="./js/createPeerConnection.js" type="module"></script>
-    <script src="./js/streamer/MediaStreamer.js" type="module"></script>
-    <script src="./js/streamer/Menu.js" type="module"></script>
-    <script src="./js/streamer/CameraSelector.js" type="module"></script>
-    <script src="./js/streamer/Streamer.js" type="module"></script>
-    <script src="./js/streamer/Placeholder.js" type="module"></script>
-    <script src="./js/streamer/main.js" type="module"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body>
-    <div id="container">
-        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-            <div class="flex lg:flex-1">
-                <a href="/" class="-m-1.5 p-1.5">
-                    <span class="h-8 w-auto">Web🐲RTC</span>
-                </a>
-            </div>
-            
-        </nav>
-        <div class="flex h-full items-center justify-center">
-            <div class="grid grid-cols-2 divide-x text-center">
-                <a href="/viewer.html" class="text-md leading-6 text-gray-900 w-48 hover:border-b-2 hover:border-b-sky-200">viewer</a>
-                <a href="/streamer.html"
-                    class="text-md leading-6 text-gray-900 w-48 border-b-2 border-b-sky-200">streamer</a>
-            </div>
-        </div>
-        <div class="flex flex-col justify-center gap-4 pt-4">
-            <div class="flex justify-center">
-                <div class="flex flex-col w-96">
-                    <label htmlFor="cameras" class="block text-sm font-medium leading-6 text-gray-900">
-                        Select Camera before starting the stream
-                    </label>
-                    <select id="cameras" name="cameras"
-                            class="appearance-none mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    </select>
-                </div>
-            </div>
-            <div class="flex justify-center">
-                <div class="flex h-[18rem] w-96 bg-slate-500 justify-center items-center rounded-md">
-                    <div id="placeholder" class="fa-3x text-white block">
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                    </div>
-                    <video id="streamer" class="rounded-md block hidden" autoplay playsinline>
-                        <p>
-                            Your browser doesn't support HTML video.
-                        </p>
-                    </video>
-                </div>
-            </div>
-            <div class="flex justify-center gap-8">
-                <button id="toggle-stream" class="rounded-full bg-green-500 hover:bg-green-600 active:bg-green-700 focus:outline-none focus:ring focus:ring-green-300 w-12 h-12 text-white"><i class="fa-solid fa-tower-broadcast"></i></button>
-                <button id="toggle-video" class="rounded-full bg-sky-500 hover:bg-sky-600 active:bg-sky-700 focus:outline-none focus:ring focus:ring-sky-300 w-12 h-12 text-white"><i class="fa-solid fa-video"></i></button>
-                <button id="toggle-audio" class="rounded-full bg-sky-500 hover:bg-sky-600 active:bg-sky-700 focus:outline-none focus:ring focus:ring-sky-300 w-12 h-12 text-white"><i class="fa-solid fa-microphone"></i></button>
-            </div>
-        </div>
-    </div>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>WebRTC POC</title>
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+		<script
+			src="https://kit.fontawesome.com/eb1c665375.js"
+			crossorigin="anonymous"
+		></script>
+
+		<script src="./js/constants.js" type="module"></script>
+		<script src="./js/createPeerConnection.js" type="module"></script>
+		<script src="./js/streamer/MediaStreamer.js" type="module"></script>
+		<script src="./js/streamer/Menu.js" type="module"></script>
+		<script src="./js/streamer/CameraSelector.js" type="module"></script>
+		<script src="./js/streamer/Streamer.js" type="module"></script>
+		<script src="./js/streamer/Placeholder.js" type="module"></script>
+		<script src="./js/streamer/main.js" type="module"></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body>
+		<div id="container">
+			<nav
+				class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+				aria-label="Global"
+			>
+				<div class="flex lg:flex-1">
+					<a href="/" class="-m-1.5 p-1.5">
+						<span class="h-8 w-auto">Web🐲RTC</span>
+					</a>
+				</div>
+			</nav>
+			<div class="flex h-full items-center justify-center">
+				<div class="grid grid-cols-2 divide-x text-center">
+					<a
+						href="/viewer.html"
+						class="text-md leading-6 text-gray-900 w-48 hover:border-b-2 hover:border-b-blue-500"
+						>viewer</a
+					>
+					<a
+						href="/streamer.html"
+						class="text-md leading-6 text-gray-900 w-48 border-b-2 border-b-blue-500"
+						>streamer</a
+					>
+				</div>
+			</div>
+			<div class="flex flex-col justify-center gap-4 pt-4">
+				<div class="flex justify-center">
+					<div class="flex flex-col w-96">
+						<label
+							htmlFor="cameras"
+							class="block text-sm font-medium leading-6 text-gray-900"
+						>
+							Select Camera before starting the stream
+						</label>
+						<select
+							id="cameras"
+							name="cameras"
+							class="appearance-none mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+						></select>
+					</div>
+				</div>
+				<div class="flex justify-center">
+					<div
+						class="flex h-[18rem] w-96 bg-slate-500 justify-center items-center rounded-md"
+					>
+						<div id="placeholder" class="fa-3x text-white block">
+							<i class="fa-solid fa-spinner fa-spin"></i>
+						</div>
+						<video
+							id="streamer"
+							class="rounded-md block hidden"
+							autoplay
+							playsinline
+						>
+							<p>Your browser doesn't support HTML video.</p>
+						</video>
+					</div>
+				</div>
+				<div class="flex justify-center gap-8">
+					<button
+						id="toggle-stream"
+						class="rounded-full bg-gradient-to-r from-lime-500 to-green-500 hover:from-lime-600 hover:to-green-600 text-white focus:outline-none focus:ring focus:ring-green-300 w-12 h-12"
+					>
+						<i class="fa-solid fa-tower-broadcast"></i>
+					</button>
+					<button
+						id="toggle-video"
+						class="w-12 h-12 bg-gradient-to-r from-blue-500 to-sky-500 hover:from-sky-600 hover:to-blue-600 text-white p-2 rounded-full focus:outline-none disabled:opacity-50"
+					>
+						<i class="fa-solid fa-video"></i>
+					</button>
+					<button
+						id="toggle-audio"
+						class="w-12 h-12 bg-gradient-to-r from-blue-500 to-sky-500 hover:from-sky-600 hover:to-blue-600 text-white p-2 rounded-full focus:outline-none disabled:opacity-50"
+					>
+						<i class="fa-solid fa-microphone"></i>
+					</button>
+				</div>
+				<div class="flex justify-center mt-4 gap-4 pt-4">
+					<div class="flex justify-center flex-col">
+						<div
+							class="px-4 py-2 flex-col border h-[18rem] w-96 border-gray-300 rounded-md overflow-y-scroll"
+							id="message-box"
+						>
+							<p class="text-gray-400">No messages</p>
+						</div>
+						<div class="flex mt-4 w-96">
+							<input
+								type="text"
+								class="px-4 py-2 w-full border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:border-transparent enabled:hover:border-gray-400"
+								placeholder="Enter text"
+								id="message"
+								disabled
+							/>
+							<button
+								id="send-message"
+								class="bg-gradient-to-r from-blue-500 to-sky-500 hover:from-sky-600 hover:to-blue-600 text-white p-2 rounded-r-lg focus:outline-none disabled:opacity-50"
+								disabled
+							>
+								Send
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

@@ -2,14 +2,26 @@ import { SIGNAL_TYPE } from "../constants.js";
 import createPeerConnection from "../createPeerConnection.js";
 
 class Viewer {
-	constructor({ signalServer, room, videoElement }) {
+	constructor({
+		signalServer,
+		room,
+		videoElement,
+		messageBox,
+		messageInput,
+		sendMessageButton,
+	}) {
 		this.signalServer = signalServer;
 		this.room = room;
 		this.video = videoElement;
 		this.room = room;
+		this.messageBox = messageBox;
+		this.messageInput = messageInput;
+		this.sendMessageButton = sendMessageButton;
 		this.peerConnection = undefined;
+		this.dataChannel = undefined;
 		this.joinRoom();
 		this.handleMessage();
+		this.handleClickSendMessage();
 	}
 
 	async createConnection() {
@@ -25,7 +37,7 @@ class Viewer {
 	async sendOffer() {
 		await this.createConnection();
 		const offer = await this.peerConnection.createOffer();
-		await this.peerConnection.setLocalDescription(offer);;
+		await this.peerConnection.setLocalDescription(offer);
 		console.log("Sending offer");
 		this.signalServer.send(
 			JSON.stringify({
@@ -43,6 +55,7 @@ class Viewer {
 		await this.peerConnection.setRemoteDescription(offer);
 		const answer = await this.peerConnection.createAnswer();
 		await this.peerConnection.setLocalDescription(answer);
+		this.receiveDataChannel();
 		this.signalServer.send(
 			JSON.stringify({
 				type: SIGNAL_TYPE.ANSWER,
@@ -134,6 +147,49 @@ class Viewer {
 				stream.addTrack(track);
 			});
 		};
+	}
+
+	receiveDataChannel() {
+		this.peerConnection.ondatachannel = (event) => {
+			this.dataChannel = event.channel;
+
+			this.dataChannel.onmessage = (event) => {
+				console.log("Message received: ", event.data);
+
+				const newMessage = document.createElement("p");
+				newMessage.textContent = event.data;
+				this.messageBox.append(newMessage);
+			};
+
+			this.dataChannel.onopen = () => {
+				console.log("Data channel opened.");
+
+				this.messageInput.disabled = false;
+				this.messageInput.focus();
+				this.sendMessageButton.disabled = false;
+			};
+
+			this.dataChannel.onclose = () => {
+				console.log("Data channel closed.");
+
+				this.messageInput.disabled = true;
+				this.sendMessageButton.disabled = true;
+			};
+		};
+	}
+
+	handleClickSendMessage() {
+		this.sendMessageButton.addEventListener("click", () => {
+			if (!this.dataChannel) {
+				console.error("Data channel not established.");
+				return;
+			}
+			this.dataChannel.send(this.messageInput.value);
+			const newMessage = document.createElement("p");
+			newMessage.textContent = this.messageInput.value;
+			this.messageBox.append(newMessage);
+			this.messageInput.value = "";
+		});
 	}
 }
 
