@@ -4,7 +4,7 @@ import CameraSelector from "./CameraSelector.js";
 import Streamer from "./Streamer.js";
 import Placeholder from "./Placeholder.js";
 
-const signalServer = new WebSocket("ws://localhost:8080/ws");
+const signalServer = new WebSocket("ws://34.87.207.114/ws");
 const videoElement = document.querySelector("video#streamer");
 const placeholderElement = document.querySelector("div#placeholder");
 const toggleVideoElement = document.querySelector("button#toggle-video");

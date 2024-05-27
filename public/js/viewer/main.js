@@ -1,6 +1,6 @@
 import Viewer from "./Viewer.js";
 
-const signalServer = new WebSocket("ws://localhost:8080/ws");
+const signalServer = new WebSocket("ws://34.87.207.114/ws");
 const videoElement = document.querySelector("video#streamer");
 
 const main = async () => {

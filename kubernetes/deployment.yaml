@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtc-app-deployment
+  labels:
+    app: rtc-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rtc-app
+  template:
+    metadata:
+      labels:
+        app: rtc-app
+    spec:
+      containers:
+      - name: rtc-app
+        image: daosgava/rtc-app:1.0.0
+        ports:
+        - containerPort: 8888
+        env:
+        - name: TURN_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: rtc-app-configmap
+              key: TURN_USERNAME
+        - name: TURN_SERVER_URLS
+          valueFrom:
+            configMapKeyRef:
+              name: rtc-app-configmap
+              key: TURN_SERVER_URLS
+        - name: TURN_CREDENTIAL
+          valueFrom:
+            secretKeyRef:
+              name: rtc-app-secrets
+              key: TURN_CREDENTIAL

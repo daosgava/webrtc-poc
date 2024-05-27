@@ -6,7 +6,6 @@ class MediaStreamer {
 		this.stream = undefined;
 		this.isAudioActive = true;
 		this.isVideoActive = true;
-		this.listenDeviceChanges();
 	}
 
 	async streamToVideo(cameraId) {
@@ -21,7 +20,7 @@ class MediaStreamer {
 			this.stream = await navigator.mediaDevices.getUserMedia(
 				constraints,
 			);
-
+			this.listenDeviceChanges();
 			this.videoElement.srcObject = this.stream;
 		} catch (error) {
 			console.error("Error opening video camera.", error);

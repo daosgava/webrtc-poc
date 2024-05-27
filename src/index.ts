@@ -9,7 +9,7 @@ const app = new Elysia()
 		username: process.env.TURN_USERNAME,
 		credential: process.env.TURN_CREDENTIAL,
 	}))
-	.listen(3000);
+	.listen(8888);
 
 console.log(
 	`🐲: Server is running at ${app.server?.hostname}:${app.server?.port}`,
