@@ -116,7 +116,6 @@ class Menu {
 				...generateClasses(COLORS.green),
 			);
 		} else {
-			console.log(generateClasses(COLORS.green));
 			this.toggleStreamButton.classList.remove(
 				...generateClasses(COLORS.green),
 			);

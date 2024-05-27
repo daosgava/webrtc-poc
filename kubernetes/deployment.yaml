@@ -17,6 +17,7 @@ spec:
       containers:
       - name: rtc-app
         image: daosgava/rtc-app:1.0.0
+        imagePullPolicy: Always
         ports:
         - containerPort: 8888
         env:
