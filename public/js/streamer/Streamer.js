@@ -22,6 +22,7 @@ class Streamer {
 		this.joinRoom();
 		this.handleMessage();
 		this.handleClickSendMessage();
+		this.handleEnterSendMessage();
 	}
 
 	async changeStreamerState(isActive) {
@@ -189,6 +190,14 @@ class Streamer {
 			const newMessage = this.createMessageBubble(this.messageInput.value, true);
 			this.messageBox.append(newMessage);
 			this.messageInput.value = "";
+		});
+	}
+
+	handleEnterSendMessage() {
+		this.messageInput.addEventListener("keydown", (event) => {
+			if (event.key === "Enter") {
+				this.sendMessageButton.click();
+			}
 		});
 	}
 }

@@ -22,6 +22,7 @@ class Viewer {
 		this.joinRoom();
 		this.handleMessage();
 		this.handleClickSendMessage();
+		this.handleEnterSendMessage();
 	}
 
 	async createConnection() {
@@ -210,6 +211,14 @@ class Viewer {
 			);
 			this.messageBox.append(newMessage);
 			this.messageInput.value = "";
+		});
+	}
+
+	handleEnterSendMessage() {
+		this.messageInput.addEventListener("keydown", (event) => {
+			if (event.key === "Enter") {
+				this.sendMessageButton.click();
+			}
 		});
 	}
 }
