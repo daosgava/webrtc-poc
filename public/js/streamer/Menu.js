@@ -98,10 +98,6 @@ class Menu {
 			this.audioButtonIcon.classList.remove("fa-microphone-slash");
 			this.audioButtonIcon.classList.add("fa-microphone");
 		} else {
-			console.log(
-				"🐲: updateAudioButtonIcon -> this.audioButtonIcon",
-				this.audioButtonIcon,
-			);
 			this.audioButtonIcon.classList.remove("fa-microphone");
 			this.audioButtonIcon.classList.add("fa-microphone-slash");
 		}
