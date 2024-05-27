@@ -13,7 +13,7 @@ class MediaStreamer {
 			// TODO - Add cameraId to constraints
 			const deviceId = cameraId || undefined;
 			const constraints = {
-				audio: false,
+				audio: true,
 				video: true,
 			};
 
