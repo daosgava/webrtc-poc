@@ -1,12 +1,12 @@
 const COLORS = {
-	gray: "gray",
-	green: "green",
+	gray: ["gray", "teal"],
+	green: ["green", "lime"],
 };
 const generateClasses = (color) => [
-	`bg-${color}-500`,
-	`hover:bg-${color}-600`,
-	`active:bg-${color}-700`,
-	`focus:ring-${color}-300`,
+	`from-${color[0]}-500`,
+	`to-${color[1]}-500`,
+	`hover:from-${color[0]}-600`,
+	`hover:to-${color[1]}-600`,
 ];
 
 class Menu {
@@ -20,15 +20,15 @@ class Menu {
 		this.toggleVideoButton = toggleVideoElement;
 		this.toggleAudioButton = toggleAudioElement;
 		this.toggleStreamButton = toggleStreamElement;
-		this.videoButtonIcon = toggleVideoElement.childNodes[0];
-		this.audioButtonIcon = toggleAudioElement.childNodes[0];
+		this.videoButtonIcon = toggleVideoElement.querySelector("i");
+		this.audioButtonIcon = toggleAudioElement.querySelector("i");
 		this.mediaStreamer = mediaStreamer;
 		this.streamer = streamer;
 		this.attachClickEvents();
 
 		// Deactivate video and audio by default
-		this.isVideoButtonActive = true;
-		this.isAudioButtonActive = true;
+		this.isVideoButtonActive = false;
+		this.isAudioButtonActive = false;
 		this.isStreamButtonActive = false;
 
 		this.mediaStreamer.setVideoState(this.isVideoButtonActive);
@@ -98,6 +98,10 @@ class Menu {
 			this.audioButtonIcon.classList.remove("fa-microphone-slash");
 			this.audioButtonIcon.classList.add("fa-microphone");
 		} else {
+			console.log(
+				"🐲: updateAudioButtonIcon -> this.audioButtonIcon",
+				this.audioButtonIcon,
+			);
 			this.audioButtonIcon.classList.remove("fa-microphone");
 			this.audioButtonIcon.classList.add("fa-microphone-slash");
 		}
@@ -112,6 +116,7 @@ class Menu {
 				...generateClasses(COLORS.green),
 			);
 		} else {
+			console.log(generateClasses(COLORS.green));
 			this.toggleStreamButton.classList.remove(
 				...generateClasses(COLORS.green),
 			);

@@ -9,7 +9,6 @@
 			src="https://kit.fontawesome.com/eb1c665375.js"
 			crossorigin="anonymous"
 		></script>
-
 		<script src="./js/constants.js" type="module"></script>
 		<script src="./js/createPeerConnection.js" type="module"></script>
 		<script src="./js/streamer/MediaStreamer.js" type="module"></script>
@@ -64,7 +63,7 @@
 				</div>
 				<div class="flex justify-center">
 					<div
-						class="flex h-[18rem] w-96 bg-slate-500 justify-center items-center rounded-md"
+						class="flex h-[18rem] w-96 bg-gradient-to-r from-slate-500 to-teal-500 justify-center items-center rounded-md"
 					>
 						<div id="placeholder" class="fa-3x text-white block">
 							<i class="fa-solid fa-spinner fa-spin"></i>
@@ -82,7 +81,7 @@
 				<div class="flex justify-center gap-8">
 					<button
 						id="toggle-stream"
-						class="rounded-full bg-gradient-to-r from-lime-500 to-green-500 hover:from-lime-600 hover:to-green-600 text-white focus:outline-none focus:ring focus:ring-green-300 w-12 h-12"
+						class="rounded-full bg-gradient-to-r from-green-500 to-lime-500 hover:from-green-600 hover:to-lime-600 w-12 h-12 text-white"
 					>
 						<i class="fa-solid fa-tower-broadcast"></i>
 					</button>
@@ -90,13 +89,13 @@
 						id="toggle-video"
 						class="w-12 h-12 bg-gradient-to-r from-blue-500 to-sky-500 hover:from-sky-600 hover:to-blue-600 text-white p-2 rounded-full focus:outline-none disabled:opacity-50"
 					>
-						<i class="fa-solid fa-video"></i>
+						<i class="fa-solid fa-video-slash"></i>
 					</button>
 					<button
 						id="toggle-audio"
 						class="w-12 h-12 bg-gradient-to-r from-blue-500 to-sky-500 hover:from-sky-600 hover:to-blue-600 text-white p-2 rounded-full focus:outline-none disabled:opacity-50"
 					>
-						<i class="fa-solid fa-microphone"></i>
+						<i class="fa-solid fa-microphone-slash"></i>
 					</button>
 				</div>
 				<div class="flex justify-center mt-4 gap-4">
